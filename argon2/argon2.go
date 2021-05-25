@@ -96,4 +96,5 @@ func Verify(hash string, plain string) (bool, error) {
 	if subtle.ConstantTimeCompare(verifyHash, decodedHash) == 1 {
 		return true, nil
 	}
+	return false, nil
 }
