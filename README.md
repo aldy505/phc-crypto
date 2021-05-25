@@ -43,7 +43,7 @@ func main() {
 ### Currently work-in-progress formats:
 
 * Argon2 (argon2i & argon2id)
-* Tea (future)
+* Chacha20poly1305
 
 ## LICENSE
 
