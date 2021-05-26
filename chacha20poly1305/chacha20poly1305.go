@@ -31,7 +31,7 @@ func Hash(plain string) (string, error) {
 		Params: map[string]interface{}{
 			"n": hex.EncodeToString(nonce),
 		},
-		Id: "chacha20poly1305",
+		ID: "chacha20poly1305",
 	})
 	return hashString, nil
 }

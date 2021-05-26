@@ -13,6 +13,7 @@ import (
 	"golang.org/x/crypto/argon2"
 )
 
+// Config initialize the config require to create a hash function
 type Config struct {
 	Time        uint32
 	Memory      uint32
@@ -48,7 +49,7 @@ func Hash(plain string, config Config) (string, error) {
 	}
 	version := argon2.Version
 	hashString := format.Serialize(format.PHCConfig{
-		Id:      "argon2" + config.Variant,
+		ID:      "argon2" + config.Variant,
 		Version: version,
 		Params: map[string]interface{}{
 			"m": strconv.Itoa(int(config.Memory)),
@@ -63,7 +64,7 @@ func Hash(plain string, config Config) (string, error) {
 
 func Verify(hash string, plain string) (bool, error) {
 	deserialize := format.Deserialize(hash)
-	if strings.HasPrefix(deserialize.Id, "argon2") == false {
+	if !strings.HasPrefix(deserialize.ID, "argon2") {
 		return false, errors.New("hashed string is not argon instance")
 	}
 
@@ -87,9 +88,9 @@ func Verify(hash string, plain string) (bool, error) {
 		return false, err
 	}
 
-	if deserialize.Id == "argon2id" {
+	if deserialize.ID == "argon2id" {
 		verifyHash = argon2.IDKey([]byte(plain), []byte(deserialize.Salt), uint32(time), uint32(memory), uint8(parallelism), keyLen)
-	} else if deserialize.Id == "argon2i" {
+	} else if deserialize.ID == "argon2i" {
 		verifyHash = argon2.Key([]byte(plain), []byte(deserialize.Salt), uint32(time), uint32(memory), uint8(parallelism), keyLen)
 	}
 

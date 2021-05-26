@@ -13,6 +13,7 @@ import (
 	"golang.org/x/crypto/scrypt"
 )
 
+// Config initialize the config require to create a hash function
 type Config struct {
 	Cost        int
 	Rounds      int
@@ -43,7 +44,7 @@ func Hash(plain string, config Config) (string, error) {
 	}
 
 	hashString := format.Serialize(format.PHCConfig{
-		Id:      "scrypt",
+		ID:      "scrypt",
 		Version: 0,
 		Params: map[string]interface{}{
 			"ln": config.Cost,
@@ -59,7 +60,7 @@ func Hash(plain string, config Config) (string, error) {
 
 func Verify(hash string, plain string) (bool, error) {
 	deserialize := format.Deserialize(hash)
-	if !strings.HasPrefix(deserialize.Id, "scrypt") {
+	if !strings.HasPrefix(deserialize.ID, "scrypt") {
 		return false, errors.New("hashed string is not scrypt instance")
 	}
 

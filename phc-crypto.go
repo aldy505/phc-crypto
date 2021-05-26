@@ -10,11 +10,13 @@ import (
 	"github.com/aldy505/phc-crypto/scrypt"
 )
 
+// Algo returns struct that will be use on Hash and Verify function
 type Algo struct {
 	Name   string
 	Config *Config
 }
 
+// Config returns the general config of the hashing function
 type Config struct {
 	Cost        int
 	Rounds      int
@@ -24,6 +26,7 @@ type Config struct {
 	HashFunc    string
 }
 
+// Use initiates the hash/verify function
 func Use(name string, config Config) (*Algo, error) {
 	var algo *Algo
 
@@ -41,6 +44,7 @@ func Use(name string, config Config) (*Algo, error) {
 	}
 }
 
+// Hash returns a PHC formatted string of a hash function (that was initiated from Use)
 func (a *Algo) Hash(plain string) (hash string, err error) {
 	if a.Name == "scrypt" {
 		hash, err = scrypt.Hash(plain, scrypt.Config{
@@ -74,13 +78,13 @@ func (a *Algo) Hash(plain string) (hash string, err error) {
 	} else if a.Name == "chacha20poly1305" {
 		hash, err = chacha20poly1305.Hash(plain)
 		return
-	} else {
-		hash = ""
-		err = errors.New("the algorithm provided is not supported")
-		return
 	}
+	hash = ""
+	err = errors.New("the algorithm provided is not supported")
+	return
 }
 
+// Hash returns a boolean of a hash function (that was initiated from Use)
 func (a *Algo) Verify(hash, plain string) (bool, error) {
 	return false, nil
 }

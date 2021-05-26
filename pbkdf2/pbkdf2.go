@@ -14,6 +14,7 @@ import (
 	"golang.org/x/crypto/pbkdf2"
 )
 
+// Config initialize the config require to create a hash function
 type Config struct {
 	Rounds   int
 	KeyLen   int
@@ -53,7 +54,7 @@ func Hash(plain string, config Config) (string, error) {
 	}
 
 	hashString := format.Serialize(format.PHCConfig{
-		Id: "pbkdf2" + config.HashFunc,
+		ID: "pbkdf2" + config.HashFunc,
 		Params: map[string]interface{}{
 			"i": config.Rounds,
 		},

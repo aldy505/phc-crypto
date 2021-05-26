@@ -9,6 +9,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// Config initialize the config require to create a hash function
 type Config struct {
 	Rounds int
 }
@@ -19,7 +20,7 @@ func Hash(plain string, config Config) (string, error) {
 	}
 	hash, err := bcrypt.GenerateFromPassword([]byte(plain), config.Rounds)
 	hashString := format.Serialize(format.PHCConfig{
-		Id:      "bcrypt",
+		ID:      "bcrypt",
 		Version: 0,
 		Params: map[string]interface{}{
 			"r": config.Rounds,
@@ -28,14 +29,13 @@ func Hash(plain string, config Config) (string, error) {
 	})
 	if err != nil {
 		return "", err
-	} else {
-		return hashString, nil
 	}
+	return hashString, nil
 }
 
 func Verify(hash string, plain string) (bool, error) {
 	deserialize := format.Deserialize(hash)
-	if !strings.HasPrefix(deserialize.Id, "bcrypt") {
+	if !strings.HasPrefix(deserialize.ID, "bcrypt") {
 		return false, errors.New("hashed string is not a bcrypt instance")
 	}
 	decodedHash, err := hex.DecodeString(deserialize.Hash)
@@ -45,7 +45,6 @@ func Verify(hash string, plain string) (bool, error) {
 	err = bcrypt.CompareHashAndPassword(decodedHash, []byte(plain))
 	if err != nil {
 		return false, nil
-	} else {
-		return true, nil
 	}
+	return true, nil
 }

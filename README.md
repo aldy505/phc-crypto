@@ -1,6 +1,6 @@
 # PHC Crypto
 
-[![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/aldy505/phc-crypto?include_prereleases)](https://github.com/aldy505/phc-crypto/releases) [![GitHub](https://img.shields.io/github/license/aldy505/phc-crypto)](https://github.com/aldy505/phc-crypto/blob/master/LICENSE) [![Codecov](https://img.shields.io/codecov/c/gh/aldy505/phc-crypto)](https://www.codecov.io/gh/aldy505/phc-crypto) [![CodeFactor](https://www.codefactor.io/repository/github/aldy505/phc-crypto/badge)](https://www.codefactor.io/repository/github/aldy505/phc-crypto) [![Build test](https://github.com/aldy505/phc-crypto/actions/workflows/build.yml/badge.svg)](https://github.com/aldy505/phc-crypto/actions/workflows/build.yml) [![Build test](https://github.com/aldy505/phc-crypto/actions/workflows/coverage.yml/badge.svg)](https://github.com/aldy505/phc-crypto/actions/workflows/coverage.yml)
+[![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/aldy505/phc-crypto?include_prereleases)](https://github.com/aldy505/phc-crypto/releases) [![GitHub](https://img.shields.io/github/license/aldy505/phc-crypto)](https://github.com/aldy505/phc-crypto/blob/master/LICENSE) [![codecov](https://codecov.io/gh/aldy505/phc-crypto/branch/master/graph/badge.svg?token=HUTQURBZ73)](https://codecov.io/gh/aldy505/phc-crypto) [![CodeFactor](https://www.codefactor.io/repository/github/aldy505/phc-crypto/badge)](https://www.codefactor.io/repository/github/aldy505/phc-crypto) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/16c40f49aabe4e89afea7c1e1d90a483)](https://www.codacy.com/gh/aldy505/phc-crypto/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=aldy505/phc-crypto&amp;utm_campaign=Badge_Grade) [![Build test](https://github.com/aldy505/phc-crypto/actions/workflows/build.yml/badge.svg)](https://github.com/aldy505/phc-crypto/actions/workflows/build.yml) [![Build test](https://github.com/aldy505/phc-crypto/actions/workflows/coverage.yml/badge.svg)](https://github.com/aldy505/phc-crypto/actions/workflows/coverage.yml)
 
 A work in progress.
 
@@ -47,7 +47,7 @@ func main() {
 * Argon2 (argon2i & argon2id)
 * Chacha20poly1305
 
-## Want to contribute?
+## Contribute
 
 Yes please! I'm still new to Go and I create this module (or package if you will) to help me fulfill a need on my project. Feel free to refactor, add new feature, fix unknown bugs, and have fun!
 
