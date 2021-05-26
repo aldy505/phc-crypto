@@ -85,8 +85,20 @@ func (a *Algo) Hash(plain string) (hash string, err error) {
 }
 
 // Hash returns a boolean of a hash function (that was initiated from Use)
-func (a *Algo) Verify(hash, plain string) (bool, error) {
-	return false, nil
+func (a *Algo) Verify(hash, plain string) (verify bool, err error) {
+	if a.Name == "scrypt" {
+		verify, err = scrypt.Verify(hash, plain)
+		return
+	} else if a.Name == "bcrypt" {
+		verify, err = bcrypt.Verify(hash, plain)
+		return
+	} else if a.Name == "argon2" {
+		verify, err = argon2.Verify(hash, plain)
+		return
+	}
+	verify = false
+	err = errors.New("the algorithm provided is not (yet) supported")
+	return
 }
 
 func in_array(val string, array []string) bool {
