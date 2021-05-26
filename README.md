@@ -39,7 +39,30 @@ func main() {
   }
   fmt.Println(verify) // returns boolean (true/false)
 }
+```
 
+or.. (try code below at your own risk, it's brand new)
+
+```go
+import "github.com/aldy505/phc-crypto"
+
+func main() {
+  // Create a crypto instance
+  // Change the scope name to your prefered hashing algorithm
+  crypto, err := phccrypto.Use("scrypt", phccrypto.Config{})
+  
+  hash, err := crypto.Hash("password123")
+  if err != nil {
+    fmt.Println(err)
+  }
+  fmt.Println(hash) // returns string ($scrypt$v=0$p=1,ln=32768,r=8$402ffb0b23cd3d3a60bf7a86f6ac4db5$62daeae2ac...)
+
+  verify, err := crypto.Verify(hash, "password123")
+  if err != nil {
+    fmt.Println(err)
+  }
+  fmt.Println(verify) // returns boolean (true/false)
+}
 ```
 
 ### Currently work-in-progress formats:
