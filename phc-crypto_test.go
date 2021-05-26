@@ -44,6 +44,48 @@ func TestPHCCrypto(t *testing.T) {
 				t.Error("returned type is not string")
 			}
 		})
+		t.Run("verify should return true", func(t *testing.T) {
+			crypto, err := phccrypto.Use("scrypt", phccrypto.Config{})
+			if err != nil {
+				t.Error(err)
+			}
+			hash, err := crypto.Hash("password123")
+			if err != nil {
+				t.Error(err)
+			}
+			verify, err := crypto.Verify(hash, "password123")
+			if err != nil {
+				t.Error(err)
+			}
+			typeof := reflect.TypeOf(verify).Kind()
+			if typeof != reflect.Bool {
+				t.Error("returned type is not boolean")
+			}
+			if !verify {
+				t.Error("verify function returned false")
+			}
+		})
+		t.Run("verify should return false", func(t *testing.T) {
+			crypto, err := phccrypto.Use("scrypt", phccrypto.Config{})
+			if err != nil {
+				t.Error(err)
+			}
+			hash, err := crypto.Hash("password123")
+			if err != nil {
+				t.Error(err)
+			}
+			verify, err := crypto.Verify(hash, "password321")
+			if err != nil {
+				t.Error(err)
+			}
+			typeof := reflect.TypeOf(verify).Kind()
+			if typeof != reflect.Bool {
+				t.Error("returned type is not boolean")
+			}
+			if verify {
+				t.Error("verify function returned false")
+			}
+		})
 	})
 	t.Run("bcrypt test", func(t *testing.T) {
 		t.Run("should be ok without additional config", func(t *testing.T) {
@@ -59,6 +101,48 @@ func TestPHCCrypto(t *testing.T) {
 			typeof := reflect.TypeOf(hash).Kind()
 			if typeof != reflect.String {
 				t.Error("returned type is not string")
+			}
+		})
+		t.Run("verify should return true", func(t *testing.T) {
+			crypto, err := phccrypto.Use("bcrypt", phccrypto.Config{})
+			if err != nil {
+				t.Error(err)
+			}
+			hash, err := crypto.Hash("password123")
+			if err != nil {
+				t.Error(err)
+			}
+			verify, err := crypto.Verify(hash, "password123")
+			if err != nil {
+				t.Error(err)
+			}
+			typeof := reflect.TypeOf(verify).Kind()
+			if typeof != reflect.Bool {
+				t.Error("returned type is not boolean")
+			}
+			if !verify {
+				t.Error("verify function returned false")
+			}
+		})
+		t.Run("verify should return false", func(t *testing.T) {
+			crypto, err := phccrypto.Use("bcrypt", phccrypto.Config{})
+			if err != nil {
+				t.Error(err)
+			}
+			hash, err := crypto.Hash("password123")
+			if err != nil {
+				t.Error(err)
+			}
+			verify, err := crypto.Verify(hash, "password321")
+			if err != nil {
+				t.Error(err)
+			}
+			typeof := reflect.TypeOf(verify).Kind()
+			if typeof != reflect.Bool {
+				t.Error("returned type is not boolean")
+			}
+			if verify {
+				t.Error("verify function returned false")
 			}
 		})
 	})
