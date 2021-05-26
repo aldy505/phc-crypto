@@ -1,5 +1,7 @@
 # PHC Crypto
 
+[![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/aldy505/phc-crypto?include_prereleases)](https://github.com/aldy505/phc-crypto/releases) [![GitHub](https://img.shields.io/github/license/aldy505/phc-crypto)](https://github.com/aldy505/phc-crypto/blob/master/LICENSE) [![Codecov](https://img.shields.io/codecov/c/gh/aldy505/phc-crypto)](https://www.codecov.io/gh/aldy505/phc-crypto) [![CodeFactor](https://www.codefactor.io/repository/github/aldy505/phc-crypto/badge)](https://www.codefactor.io/repository/github/aldy505/phc-crypto) [![Build test](https://github.com/aldy505/phc-crypto/actions/workflows/build.yml/badge.svg)](https://github.com/aldy505/phc-crypto/actions/workflows/build.yml) [![Build test](https://github.com/aldy505/phc-crypto/actions/workflows/coverage.yml/badge.svg)](https://github.com/aldy505/phc-crypto/actions/workflows/coverage.yml)
+
 A work in progress.
 
 Inspired by [Upash](https://github.com/simonepri/upash), also implementing [PHC string format](https://github.com/P-H-C/phc-string-format/blob/master/phc-sf-spec.md)
@@ -44,6 +46,10 @@ func main() {
 
 * Argon2 (argon2i & argon2id)
 * Chacha20poly1305
+
+## Want to contribute?
+
+Yes please! I'm still new to Go and I create this module (or package if you will) to help me fulfill a need on my project. Feel free to refactor, add new feature, fix unknown bugs, and have fun!
 
 ## LICENSE
 
