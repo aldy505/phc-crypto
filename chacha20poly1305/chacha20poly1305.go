@@ -11,6 +11,7 @@ import (
 	"golang.org/x/crypto/chacha20poly1305"
 )
 
+// Hash creates a PHC-formatted hash with config provided
 func Hash(plain string) (string, error) {
 	salt := make([]byte, 32)
 	io.ReadFull(rand.Reader, salt)
@@ -34,6 +35,7 @@ func Hash(plain string) (string, error) {
 	return hashString, nil
 }
 
+// Decrypt decryptes chacha20 hash string (with given salt) to human readable string
 func Decrypt(salt []byte, hash []byte) (string, error) {
 	aead, err := chacha20poly1305.NewX(salt)
 	if err != nil {
@@ -49,6 +51,7 @@ func Decrypt(salt []byte, hash []byte) (string, error) {
 	return string(decrypted), nil
 }
 
+// Verify checks the hash if it's equal (by an algorithm) to plain text provided.
 func Verify(hash string, plain string) (bool, error) {
 	deserialize := format.Deserialize(hash)
 	if !strings.HasPrefix(deserialize.ID, "chacha20poly1305") {

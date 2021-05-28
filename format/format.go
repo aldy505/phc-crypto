@@ -1,3 +1,5 @@
+// Package format is meant to be utils for PHC Crypto package.
+// The point is to be able to serialize and deserialize strings or interface in and out of PHC string format.
 package format
 
 import (

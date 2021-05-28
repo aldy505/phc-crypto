@@ -14,9 +14,15 @@ type Config struct {
 	Rounds int
 }
 
+const (
+	// Cost of rounds, minimum of 4, maximum of 31.
+	ROUNDS = 10
+)
+
+// Hash creates a PHC-formatted hash with config provided
 func Hash(plain string, config Config) (string, error) {
 	if config.Rounds == 0 {
-		config.Rounds = 10
+		config.Rounds = ROUNDS
 	}
 	hash, err := bcrypt.GenerateFromPassword([]byte(plain), config.Rounds)
 	hashString := format.Serialize(format.PHCConfig{
@@ -33,6 +39,7 @@ func Hash(plain string, config Config) (string, error) {
 	return hashString, nil
 }
 
+// Verify checks the hash if it's equal (by an algorithm) to plain text provided.
 func Verify(hash string, plain string) (bool, error) {
 	deserialize := format.Deserialize(hash)
 	if !strings.HasPrefix(deserialize.ID, "bcrypt") {

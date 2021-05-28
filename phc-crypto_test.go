@@ -43,6 +43,23 @@ func TestPHCCrypto(t *testing.T) {
 				t.Error("returned type is not string")
 			}
 		})
+		t.Run("should be ok with additional config", func(t *testing.T) {
+			crypto, err := phccrypto.Use("scrypt", phccrypto.Config{
+				Parallelism: 3,
+			})
+			if err != nil {
+				t.Error(err)
+			}
+			hash, err := crypto.Hash("password123")
+			t.Log(hash)
+			if err != nil {
+				t.Error(err)
+			}
+			typeof := reflect.TypeOf(hash).Kind()
+			if typeof != reflect.String {
+				t.Error("returned type is not string")
+			}
+		})
 		t.Run("verify should return true", func(t *testing.T) {
 			crypto, err := phccrypto.Use("scrypt", phccrypto.Config{})
 			if err != nil {
@@ -101,6 +118,24 @@ func TestPHCCrypto(t *testing.T) {
 				t.Error("returned type is not string")
 			}
 		})
+		t.Run("should be ok with additional config", func(t *testing.T) {
+			crypto, err := phccrypto.Use("argon2", phccrypto.Config{
+				Parallelism: 3,
+				Variant:     "i",
+			})
+			if err != nil {
+				t.Error(err)
+			}
+			hash, err := crypto.Hash("password123")
+			t.Log(hash)
+			if err != nil {
+				t.Error(err)
+			}
+			typeof := reflect.TypeOf(hash).Kind()
+			if typeof != reflect.String {
+				t.Error("returned type is not string")
+			}
+		})
 		t.Run("verify should return true", func(t *testing.T) {
 			crypto, err := phccrypto.Use("argon2", phccrypto.Config{})
 			if err != nil {
@@ -146,11 +181,14 @@ func TestPHCCrypto(t *testing.T) {
 	})
 	t.Run("bcrypt test", func(t *testing.T) {
 		t.Run("should be ok without additional config", func(t *testing.T) {
-			crypto, err := phccrypto.Use("bcrypt", phccrypto.Config{})
+			crypto, err := phccrypto.Use("bcrypt", phccrypto.Config{
+				Rounds: 12,
+			})
 			if err != nil {
 				t.Error(err)
 			}
 			hash, err := crypto.Hash("password123")
+			t.Log(hash)
 			if err != nil {
 				t.Error(err)
 			}
@@ -217,6 +255,23 @@ func TestPHCCrypto(t *testing.T) {
 				t.Error("returned type is not string")
 			}
 		})
+		t.Run("should be ok with additional config", func(t *testing.T) {
+			crypto, err := phccrypto.Use("pbkdf2", phccrypto.Config{
+				HashFunc: "sha512",
+			})
+			if err != nil {
+				t.Error(err)
+			}
+			hash, err := crypto.Hash("password123")
+			t.Log(hash)
+			if err != nil {
+				t.Error(err)
+			}
+			typeof := reflect.TypeOf(hash).Kind()
+			if typeof != reflect.String {
+				t.Error("returned type is not string")
+			}
+		})
 		t.Run("verify should return true", func(t *testing.T) {
 			crypto, err := phccrypto.Use("pbkdf2", phccrypto.Config{})
 			if err != nil {
@@ -267,6 +322,7 @@ func TestPHCCrypto(t *testing.T) {
 				t.Error(err)
 			}
 			hash, err := crypto.Hash("password123")
+			t.Log(hash)
 			if err != nil {
 				t.Error(err)
 			}

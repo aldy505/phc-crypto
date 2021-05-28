@@ -70,10 +70,10 @@ func (a *Algo) Hash(plain string) (hash string, err error) {
 		return
 	} else if a.Name == "argon2" {
 		hash, err = argon2.Hash(plain, argon2.Config{
-			Time:        uint32(a.Config.Rounds),
-			Memory:      uint32(a.Config.Cost),
-			Parallelism: uint8(a.Config.Parallelism),
-			KeyLen:      uint32(a.Config.KeyLen),
+			Time:        a.Config.Rounds,
+			Memory:      a.Config.Cost,
+			Parallelism: a.Config.Parallelism,
+			KeyLen:      a.Config.KeyLen,
 			Variant:     a.Config.Variant,
 		})
 		return

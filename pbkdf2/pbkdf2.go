@@ -24,17 +24,28 @@ type Config struct {
 	HashFunc string
 }
 
+const (
+	// Iteration counts.
+	ROUNDS = 4096
+	// How many bytes to generate as output.
+	KEYLEN = 32
+	// For calculating HMAC. Defaulting to sha256.
+	DEFAULT_HASHFUNCTION = "sha256"
+)
+
+// Hash creates a PHC-formatted hash with config provided
 func Hash(plain string, config Config) (string, error) {
 	if config.Rounds == 0 {
-		config.Rounds = 4096
+		config.Rounds = ROUNDS
 	}
 	if config.KeyLen == 0 {
-		config.KeyLen = 32
+		config.KeyLen = KEYLEN
 	}
 	if config.HashFunc == "" {
-		config.HashFunc = "sha1"
+		config.HashFunc = DEFAULT_HASHFUNCTION
 	}
 
+	// minimum 64 bits, 128 bits is recommended
 	salt := make([]byte, 16)
 	io.ReadFull(rand.Reader, salt)
 
@@ -68,6 +79,7 @@ func Hash(plain string, config Config) (string, error) {
 	return hashString, nil
 }
 
+// Verify checks the hash if it's equal (by an algorithm) to plain text provided.
 func Verify(hash string, plain string) (bool, error) {
 	deserialize := format.Deserialize(hash)
 

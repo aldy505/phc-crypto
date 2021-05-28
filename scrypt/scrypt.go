@@ -21,18 +21,32 @@ type Config struct {
 	KeyLen      int
 }
 
+const (
+	// How many bytes to generate as output.
+	KEYLEN = 32
+	// Iterations count (affects memory and CPU usage).
+	// Minimum for interactive login: 16384.
+	// Ideal for file encryption: 1048576.
+	COST = 32768
+	// Block size (affects memory and CPU usage).
+	ROUNDS = 8
+	// Parallelism factor (threads to run in parallel - affects the memory, CPU usage).
+	PARALLELISM = 1
+)
+
+// Hash creates a PHC-formatted hash with config provided
 func Hash(plain string, config Config) (string, error) {
 	if config.KeyLen == 0 {
-		config.KeyLen = 32
+		config.KeyLen = KEYLEN
 	}
 	if config.Cost == 0 {
-		config.Cost = 32768
+		config.Cost = COST
 	}
 	if config.Rounds == 0 {
-		config.Rounds = 8
+		config.Rounds = ROUNDS
 	}
 	if config.Parallelism == 0 {
-		config.Parallelism = 1
+		config.Parallelism = PARALLELISM
 	}
 
 	salt := make([]byte, 16)
@@ -58,6 +72,7 @@ func Hash(plain string, config Config) (string, error) {
 	return hashString, nil
 }
 
+// Verify checks the hash if it's equal (by an algorithm) to plain text provided.
 func Verify(hash string, plain string) (bool, error) {
 	deserialize := format.Deserialize(hash)
 	if !strings.HasPrefix(deserialize.ID, "scrypt") {

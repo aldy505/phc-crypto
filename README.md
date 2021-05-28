@@ -2,8 +2,6 @@
 
 [![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/aldy505/phc-crypto?include_prereleases)](https://github.com/aldy505/phc-crypto/releases) [![Go Reference](https://pkg.go.dev/badge/github.com/aldy505/phc-crypto.svg)](https://pkg.go.dev/github.com/aldy505/phc-crypto) [![GitHub](https://img.shields.io/github/license/aldy505/phc-crypto)](https://github.com/aldy505/phc-crypto/blob/master/LICENSE) [![codecov](https://codecov.io/gh/aldy505/phc-crypto/branch/master/graph/badge.svg?token=HUTQURBZ73)](https://codecov.io/gh/aldy505/phc-crypto) [![CodeFactor](https://www.codefactor.io/repository/github/aldy505/phc-crypto/badge)](https://www.codefactor.io/repository/github/aldy505/phc-crypto) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/16c40f49aabe4e89afea7c1e1d90a483)](https://www.codacy.com/gh/aldy505/phc-crypto/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=aldy505/phc-crypto&amp;utm_campaign=Badge_Grade) [![Build test](https://github.com/aldy505/phc-crypto/actions/workflows/build.yml/badge.svg)](https://github.com/aldy505/phc-crypto/actions/workflows/build.yml) [![Build test](https://github.com/aldy505/phc-crypto/actions/workflows/coverage.yml/badge.svg)](https://github.com/aldy505/phc-crypto/actions/workflows/coverage.yml)
 
-A work in progress.
-
 Inspired by [Upash](https://github.com/simonepri/upash), also implementing [PHC string format](https://github.com/P-H-C/phc-string-format/blob/master/phc-sf-spec.md)
 
 ## Usage
@@ -31,7 +29,10 @@ $ go get github.com/aldy505/phc-crypto
 ```
 
 ```go
-import "github.com/aldy505/phc-crypto"
+import (
+  "fmt"
+  "github.com/aldy505/phc-crypto"
+)
 
 func main() {
   // Create a crypto instance
