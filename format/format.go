@@ -19,7 +19,13 @@ type PHCConfig struct {
 func Serialize(config PHCConfig) string {
 	var params []string
 	for key, value := range config.Params {
-		params = append(params, key+"="+strconv.Itoa(value.(int)))
+		switch v := value.(type) {
+		case string:
+			params = append(params, key+"="+v)
+		case int:
+			params = append(params, key+"="+strconv.Itoa(v))
+		}
+
 	}
 	return "$" + config.ID + "$v=" + strconv.Itoa(config.Version) + "$" + strings.Join(params, ",") + "$" + config.Salt + "$" + config.Hash
 }
@@ -29,11 +35,14 @@ func Deserialize(hash string) PHCConfig {
 	hashArray := strings.Split(hash, "$")
 	params := make(map[string]interface{})
 
-	paramsArray := strings.Split(hashArray[3], ",")
-	for _, value := range paramsArray {
-		pair := strings.Split(value, "=")
-		params[pair[0]] = pair[1]
+	if len(hashArray[3]) != 0 {
+		paramsArray := strings.Split(hashArray[3], ",")
+		for _, value := range paramsArray {
+			pair := strings.Split(value, "=")
+			params[pair[0]] = pair[1]
+		}
 	}
+
 	version, _ := strconv.Atoi(hashArray[2])
 	return PHCConfig{
 		ID:      hashArray[1],

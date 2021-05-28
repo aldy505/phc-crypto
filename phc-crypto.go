@@ -31,7 +31,7 @@ func Use(name string, config Config) (*Algo, error) {
 	var algo *Algo
 
 	algos := []string{"scrypt", "pbkdf2", "chacha20poly1305", "bcrypt", "argon2"}
-	check := in_array(name, algos)
+	check := inArray(name, algos)
 
 	if check {
 		algo = &Algo{
@@ -44,7 +44,8 @@ func Use(name string, config Config) (*Algo, error) {
 	}
 }
 
-// Hash returns a PHC formatted string of a hash function (that was initiated from Use)
+// Hash returns a PHC formatted string of a hash function (that was initiated from Use).
+// Example usage:
 func (a *Algo) Hash(plain string) (hash string, err error) {
 	if a.Name == "scrypt" {
 		hash, err = scrypt.Hash(plain, scrypt.Config{
@@ -84,7 +85,7 @@ func (a *Algo) Hash(plain string) (hash string, err error) {
 	return
 }
 
-// Hash returns a boolean of a hash function (that was initiated from Use)
+// Verify returns a boolean of a hash function (that was initiated from Use).
 func (a *Algo) Verify(hash, plain string) (verify bool, err error) {
 	if a.Name == "scrypt" {
 		verify, err = scrypt.Verify(hash, plain)
@@ -98,13 +99,16 @@ func (a *Algo) Verify(hash, plain string) (verify bool, err error) {
 	} else if a.Name == "pbkdf2" {
 		verify, err = pbkdf2.Verify(hash, plain)
 		return
+	} else if a.Name == "chacha20poly1305" {
+		verify, err = chacha20poly1305.Verify(hash, plain)
+		return
 	}
 	verify = false
 	err = errors.New("the algorithm provided is not (yet) supported")
 	return
 }
 
-func in_array(val string, array []string) bool {
+func inArray(val string, array []string) bool {
 	for i := range array {
 		if ok := array[i] == val; ok {
 			return true

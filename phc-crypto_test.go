@@ -260,4 +260,62 @@ func TestPHCCrypto(t *testing.T) {
 			}
 		})
 	})
+	t.Run("chacha20poly1305 test", func(t *testing.T) {
+		t.Run("should be ok without additional config", func(t *testing.T) {
+			crypto, err := phccrypto.Use("chacha20poly1305", phccrypto.Config{})
+			if err != nil {
+				t.Error(err)
+			}
+			hash, err := crypto.Hash("password123")
+			if err != nil {
+				t.Error(err)
+			}
+			typeof := reflect.TypeOf(hash).Kind()
+			if typeof != reflect.String {
+				t.Error("returned type is not string")
+			}
+		})
+		t.Run("verify should return true", func(t *testing.T) {
+			crypto, err := phccrypto.Use("chacha20poly1305", phccrypto.Config{})
+			if err != nil {
+				t.Error(err)
+			}
+			hash, err := crypto.Hash("password123")
+			if err != nil {
+				t.Error(err)
+			}
+			verify, err := crypto.Verify(hash, "password123")
+			if err != nil {
+				t.Error(err)
+			}
+			typeof := reflect.TypeOf(verify).Kind()
+			if typeof != reflect.Bool {
+				t.Error("returned type is not boolean")
+			}
+			if !verify {
+				t.Error("verify function returned false")
+			}
+		})
+		t.Run("verify should return false", func(t *testing.T) {
+			crypto, err := phccrypto.Use("chacha20poly1305", phccrypto.Config{})
+			if err != nil {
+				t.Error(err)
+			}
+			hash, err := crypto.Hash("password123")
+			if err != nil {
+				t.Error(err)
+			}
+			verify, err := crypto.Verify(hash, "password321")
+			if err != nil {
+				t.Error(err)
+			}
+			typeof := reflect.TypeOf(verify).Kind()
+			if typeof != reflect.Bool {
+				t.Error("returned type is not boolean")
+			}
+			if verify {
+				t.Error("verify function returned false")
+			}
+		})
+	})
 }
