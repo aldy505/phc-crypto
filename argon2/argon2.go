@@ -52,9 +52,9 @@ func Hash(plain string, config Config) (string, error) {
 		ID:      "argon2" + config.Variant,
 		Version: version,
 		Params: map[string]interface{}{
-			"m": strconv.Itoa(int(config.Memory)),
-			"t": strconv.Itoa(int(config.Time)),
-			"p": string(config.Parallelism),
+			"m": int(config.Memory),
+			"t": int(config.Time),
+			"p": int(config.Parallelism),
 		},
 		Salt: hex.EncodeToString(salt),
 		Hash: hex.EncodeToString(hash),
@@ -88,10 +88,15 @@ func Verify(hash string, plain string) (bool, error) {
 		return false, err
 	}
 
+	salt, err := hex.DecodeString(deserialize.Salt)
+	if err != nil {
+		return false, err
+	}
+
 	if deserialize.ID == "argon2id" {
-		verifyHash = argon2.IDKey([]byte(plain), []byte(deserialize.Salt), uint32(time), uint32(memory), uint8(parallelism), keyLen)
+		verifyHash = argon2.IDKey([]byte(plain), salt, uint32(time), uint32(memory), uint8(parallelism), keyLen)
 	} else if deserialize.ID == "argon2i" {
-		verifyHash = argon2.Key([]byte(plain), []byte(deserialize.Salt), uint32(time), uint32(memory), uint8(parallelism), keyLen)
+		verifyHash = argon2.Key([]byte(plain), salt, uint32(time), uint32(memory), uint8(parallelism), keyLen)
 	}
 
 	if subtle.ConstantTimeCompare(verifyHash, decodedHash) == 1 {
