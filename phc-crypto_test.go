@@ -38,7 +38,6 @@ func TestPHCCrypto(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
-			t.Log(hash)
 			typeof := reflect.TypeOf(hash).Kind()
 			if typeof != reflect.String {
 				t.Error("returned type is not string")
@@ -97,7 +96,6 @@ func TestPHCCrypto(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
-			t.Log(hash)
 			typeof := reflect.TypeOf(hash).Kind()
 			if typeof != reflect.String {
 				t.Error("returned type is not string")
@@ -109,7 +107,6 @@ func TestPHCCrypto(t *testing.T) {
 				t.Error(err)
 			}
 			hash, err := crypto.Hash("password123")
-			t.Log(hash)
 			if err != nil {
 				t.Error(err)
 			}
@@ -157,7 +154,6 @@ func TestPHCCrypto(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
-			t.Log(hash)
 			typeof := reflect.TypeOf(hash).Kind()
 			if typeof != reflect.String {
 				t.Error("returned type is not string")
@@ -216,10 +212,51 @@ func TestPHCCrypto(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
-			t.Log(hash)
 			typeof := reflect.TypeOf(hash).Kind()
 			if typeof != reflect.String {
 				t.Error("returned type is not string")
+			}
+		})
+		t.Run("verify should return true", func(t *testing.T) {
+			crypto, err := phccrypto.Use("pbkdf2", phccrypto.Config{})
+			if err != nil {
+				t.Error(err)
+			}
+			hash, err := crypto.Hash("password123")
+			if err != nil {
+				t.Error(err)
+			}
+			verify, err := crypto.Verify(hash, "password123")
+			if err != nil {
+				t.Error(err)
+			}
+			typeof := reflect.TypeOf(verify).Kind()
+			if typeof != reflect.Bool {
+				t.Error("returned type is not boolean")
+			}
+			if !verify {
+				t.Error("verify function returned false")
+			}
+		})
+		t.Run("verify should return false", func(t *testing.T) {
+			crypto, err := phccrypto.Use("pbkdf2", phccrypto.Config{})
+			if err != nil {
+				t.Error(err)
+			}
+			hash, err := crypto.Hash("password123")
+			if err != nil {
+				t.Error(err)
+			}
+			verify, err := crypto.Verify(hash, "password321")
+			if err != nil {
+				t.Error(err)
+			}
+			typeof := reflect.TypeOf(verify).Kind()
+			if typeof != reflect.Bool {
+				t.Error("returned type is not boolean")
+			}
+			if verify {
+				t.Error("verify function returned false")
 			}
 		})
 	})

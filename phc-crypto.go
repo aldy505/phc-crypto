@@ -95,6 +95,9 @@ func (a *Algo) Verify(hash, plain string) (verify bool, err error) {
 	} else if a.Name == "argon2" {
 		verify, err = argon2.Verify(hash, plain)
 		return
+	} else if a.Name == "pbkdf2" {
+		verify, err = pbkdf2.Verify(hash, plain)
+		return
 	}
 	verify = false
 	err = errors.New("the algorithm provided is not (yet) supported")
