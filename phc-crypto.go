@@ -26,7 +26,9 @@ type Config struct {
 	HashFunc    string
 }
 
-// Use initiates the hash/verify function
+// Use initiates the hash/verify function.
+// Available hash functions are: bcrypt, scrypt, argon2, pbkdf2, chacha20poly1305.
+// Please refer to each hash folder for configuration information.
 func Use(name string, config Config) (*Algo, error) {
 	var algo *Algo
 
@@ -45,7 +47,6 @@ func Use(name string, config Config) (*Algo, error) {
 }
 
 // Hash returns a PHC formatted string of a hash function (that was initiated from Use).
-// Example usage:
 func (a *Algo) Hash(plain string) (hash string, err error) {
 	if a.Name == "scrypt" {
 		hash, err = scrypt.Hash(plain, scrypt.Config{

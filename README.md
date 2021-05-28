@@ -1,6 +1,6 @@
 # PHC Crypto
 
-[![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/aldy505/phc-crypto?include_prereleases)](https://github.com/aldy505/phc-crypto/releases) [![GitHub](https://img.shields.io/github/license/aldy505/phc-crypto)](https://github.com/aldy505/phc-crypto/blob/master/LICENSE) [![codecov](https://codecov.io/gh/aldy505/phc-crypto/branch/master/graph/badge.svg?token=HUTQURBZ73)](https://codecov.io/gh/aldy505/phc-crypto) [![CodeFactor](https://www.codefactor.io/repository/github/aldy505/phc-crypto/badge)](https://www.codefactor.io/repository/github/aldy505/phc-crypto) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/16c40f49aabe4e89afea7c1e1d90a483)](https://www.codacy.com/gh/aldy505/phc-crypto/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=aldy505/phc-crypto&amp;utm_campaign=Badge_Grade) [![Build test](https://github.com/aldy505/phc-crypto/actions/workflows/build.yml/badge.svg)](https://github.com/aldy505/phc-crypto/actions/workflows/build.yml) [![Build test](https://github.com/aldy505/phc-crypto/actions/workflows/coverage.yml/badge.svg)](https://github.com/aldy505/phc-crypto/actions/workflows/coverage.yml)
+[![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/aldy505/phc-crypto?include_prereleases)](https://github.com/aldy505/phc-crypto/releases) [![Go Reference](https://pkg.go.dev/badge/github.com/aldy505/phc-crypto.svg)](https://pkg.go.dev/github.com/aldy505/phc-crypto) [![GitHub](https://img.shields.io/github/license/aldy505/phc-crypto)](https://github.com/aldy505/phc-crypto/blob/master/LICENSE) [![codecov](https://codecov.io/gh/aldy505/phc-crypto/branch/master/graph/badge.svg?token=HUTQURBZ73)](https://codecov.io/gh/aldy505/phc-crypto) [![CodeFactor](https://www.codefactor.io/repository/github/aldy505/phc-crypto/badge)](https://www.codefactor.io/repository/github/aldy505/phc-crypto) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/16c40f49aabe4e89afea7c1e1d90a483)](https://www.codacy.com/gh/aldy505/phc-crypto/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=aldy505/phc-crypto&amp;utm_campaign=Badge_Grade) [![Build test](https://github.com/aldy505/phc-crypto/actions/workflows/build.yml/badge.svg)](https://github.com/aldy505/phc-crypto/actions/workflows/build.yml) [![Build test](https://github.com/aldy505/phc-crypto/actions/workflows/coverage.yml/badge.svg)](https://github.com/aldy505/phc-crypto/actions/workflows/coverage.yml)
 
 A work in progress.
 
@@ -8,15 +8,55 @@ Inspired by [Upash](https://github.com/simonepri/upash), also implementing [PHC 
 
 ## Usage
 
+Currently there are two options of using this package:
+  1. Import all
+  2. Import specific hash function
+
 Bear in mind, these usage function might changed in the near future.
 
-### Currently working formats:
+### Currently supported formats
 
 * Bcrypt
+* Argon2i & Argon2id
 * PBKDF2
 * Scrypt
+* Chacha20poly1305
+
+For details regarding configs, please refer to their own folders (linked).
+
+### Option 1 - Import all
 
 ```bash
+$ go get github.com/aldy505/phc-crypto
+```
+
+```go
+import "github.com/aldy505/phc-crypto"
+
+func main() {
+  // Create a crypto instance
+  // Change the scope name to your prefered hashing algorithm
+  // Available options are: bcrypt, scrypt, argon2, pbkdf2, chacha20poly1305
+  crypto, err := phccrypto.Use("scrypt", phccrypto.Config{})
+  
+  hash, err := crypto.Hash("password123")
+  if err != nil {
+    fmt.Println(err)
+  }
+  fmt.Println(hash) // returns string ($scrypt$v=0$p=1,ln=32768,r=8$402ffb0b23cd3d3a$62daeae2ac...)
+
+  verify, err := crypto.Verify(hash, "password123")
+  if err != nil {
+    fmt.Println(err)
+  }
+  fmt.Println(verify) // returns boolean (true/false)
+}
+```
+
+### Option 2 - Import specific hash function
+
+```bash
+# You can pick only one of them
 $ go get github.com/aldy505/phc-crypto/bcrypt
 $ go get github.com/aldy505/phc-crypto/pbkdf2
 $ go get github.com/aldy505/phc-crypto/scrypt
@@ -31,7 +71,7 @@ func main() {
   if err != nil {
     fmt.Println(err)
   }
-  fmt.Println(hash) // returns string ($scrypt$v=0$p=1,ln=32768,r=8$402ffb0b23cd3d3a60bf7a86f6ac4db5$62daeae2ac...)
+  fmt.Println(hash) // returns string ($scrypt$v=0$p=1,ln=32768,r=8$402ffb0b23cd3d3a$62daeae2ac...)
 
   verify, err := scrypt.Verify(hash, "password123")
   if err != nil {
@@ -40,35 +80,6 @@ func main() {
   fmt.Println(verify) // returns boolean (true/false)
 }
 ```
-
-or.. (try code below at your own risk, it's brand new)
-
-```go
-import "github.com/aldy505/phc-crypto"
-
-func main() {
-  // Create a crypto instance
-  // Change the scope name to your prefered hashing algorithm
-  crypto, err := phccrypto.Use("scrypt", phccrypto.Config{})
-  
-  hash, err := crypto.Hash("password123")
-  if err != nil {
-    fmt.Println(err)
-  }
-  fmt.Println(hash) // returns string ($scrypt$v=0$p=1,ln=32768,r=8$402ffb0b23cd3d3a60bf7a86f6ac4db5$62daeae2ac...)
-
-  verify, err := crypto.Verify(hash, "password123")
-  if err != nil {
-    fmt.Println(err)
-  }
-  fmt.Println(verify) // returns boolean (true/false)
-}
-```
-
-### Currently work-in-progress formats:
-
-* Argon2 (argon2i & argon2id)
-* Chacha20poly1305
 
 ## Contribute
 
