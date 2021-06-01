@@ -47,7 +47,7 @@ func Verify(hash string, plain string) (bool, error) {
 	}
 	decodedHash, err := hex.DecodeString(deserialize.Hash)
 	if err != nil {
-		return false, nil
+		return false, err
 	}
 	err = bcrypt.CompareHashAndPassword(decodedHash, []byte(plain))
 	if err != nil {
