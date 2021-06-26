@@ -51,19 +51,20 @@ func Hash(plain string, config Config) (string, error) {
 
 	var hash []byte
 
-	if config.HashFunc == "sha1" {
+	switch config.HashFunc {
+	case "sha1":
 		hash = pbkdf2.Key([]byte(plain), salt, config.Rounds, config.KeyLen, sha1.New)
-	} else if config.HashFunc == "sha256" {
+	case "sha256":
 		hash = pbkdf2.Key([]byte(plain), salt, config.Rounds, config.KeyLen, sha256.New)
-	} else if config.HashFunc == "sha224" {
+	case "sha224":
 		hash = pbkdf2.Key([]byte(plain), salt, config.Rounds, config.KeyLen, sha256.New224)
-	} else if config.HashFunc == "sha512" {
+	case "sha512":
 		hash = pbkdf2.Key([]byte(plain), salt, config.Rounds, config.KeyLen, sha512.New)
-	} else if config.HashFunc == "sha384" {
+	case "sha384":
 		hash = pbkdf2.Key([]byte(plain), salt, config.Rounds, config.KeyLen, sha512.New384)
-	} else if config.HashFunc == "md5" {
+	case "md5":
 		hash = pbkdf2.Key([]byte(plain), salt, config.Rounds, config.KeyLen, md5.New)
-	} else {
+	default:
 		return "", errors.New("we don't support " + config.HashFunc + " for a hash function.")
 	}
 
@@ -107,19 +108,20 @@ func Verify(hash string, plain string) (bool, error) {
 
 	var verifyHash []byte
 
-	if hashFunc == "sha1" {
+	switch hashFunc {
+	case "sha1":
 		verifyHash = pbkdf2.Key([]byte(plain), salt, int(rounds), keyLen, sha1.New)
-	} else if hashFunc == "sha256" {
+	case "sha256":
 		verifyHash = pbkdf2.Key([]byte(plain), salt, int(rounds), keyLen, sha256.New)
-	} else if hashFunc == "sha224" {
+	case "sha224":
 		verifyHash = pbkdf2.Key([]byte(plain), salt, int(rounds), keyLen, sha256.New224)
-	} else if hashFunc == "sha512" {
+	case "sha512":
 		verifyHash = pbkdf2.Key([]byte(plain), salt, int(rounds), keyLen, sha512.New)
-	} else if hashFunc == "sha384" {
+	case "sha384":
 		verifyHash = pbkdf2.Key([]byte(plain), salt, int(rounds), keyLen, sha512.New384)
-	} else if hashFunc == "md5" {
+	case "md5":
 		verifyHash = pbkdf2.Key([]byte(plain), salt, int(rounds), keyLen, md5.New)
-	} else {
+	default:
 		return false, errors.New("we don't support " + hashFunc + " for a hash function.")
 	}
 

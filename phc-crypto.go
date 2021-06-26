@@ -48,7 +48,8 @@ func Use(name string, config Config) (*Algo, error) {
 
 // Hash returns a PHC formatted string of a hash function (that was initiated from Use).
 func (a *Algo) Hash(plain string) (hash string, err error) {
-	if a.Name == "scrypt" {
+	switch a.Name {
+	case "scrypt":
 		hash, err = scrypt.Hash(plain, scrypt.Config{
 			Cost:        a.Config.Cost,
 			Rounds:      a.Config.Rounds,
@@ -56,19 +57,12 @@ func (a *Algo) Hash(plain string) (hash string, err error) {
 			KeyLen:      a.Config.KeyLen,
 		})
 		return
-	} else if a.Name == "pbkdf2" {
-		hash, err = pbkdf2.Hash(plain, pbkdf2.Config{
-			Rounds:   a.Config.Rounds,
-			KeyLen:   a.Config.KeyLen,
-			HashFunc: a.Config.HashFunc,
-		})
-		return
-	} else if a.Name == "bcrypt" {
+	case "bcrypt":
 		hash, err = bcrypt.Hash(plain, bcrypt.Config{
 			Rounds: a.Config.Rounds,
 		})
 		return
-	} else if a.Name == "argon2" {
+	case "argon2":
 		hash, err = argon2.Hash(plain, argon2.Config{
 			Time:        a.Config.Rounds,
 			Memory:      a.Config.Cost,
@@ -77,36 +71,46 @@ func (a *Algo) Hash(plain string) (hash string, err error) {
 			Variant:     a.Config.Variant,
 		})
 		return
-	} else if a.Name == "chacha20poly1305" {
+	case "pbkdf2":
+		hash, err = pbkdf2.Hash(plain, pbkdf2.Config{
+			Rounds:   a.Config.Rounds,
+			KeyLen:   a.Config.KeyLen,
+			HashFunc: a.Config.HashFunc,
+		})
+		return
+	case "chacha20poly1305":
 		hash, err = chacha20poly1305.Hash(plain)
 		return
+	default:
+		hash = ""
+		err = errors.New("the algorithm provided is not supported")
+		return
 	}
-	hash = ""
-	err = errors.New("the algorithm provided is not supported")
-	return
 }
 
 // Verify returns a boolean of a hash function (that was initiated from Use).
 func (a *Algo) Verify(hash, plain string) (verify bool, err error) {
-	if a.Name == "scrypt" {
+	switch a.Name {
+	case "scrypt":
 		verify, err = scrypt.Verify(hash, plain)
 		return
-	} else if a.Name == "bcrypt" {
+	case "bcrypt":
 		verify, err = bcrypt.Verify(hash, plain)
 		return
-	} else if a.Name == "argon2" {
+	case "argon2":
 		verify, err = argon2.Verify(hash, plain)
 		return
-	} else if a.Name == "pbkdf2" {
+	case "pbkdf2":
 		verify, err = pbkdf2.Verify(hash, plain)
 		return
-	} else if a.Name == "chacha20poly1305" {
+	case "chacha20poly1305":
 		verify, err = chacha20poly1305.Verify(hash, plain)
 		return
+	default:
+		verify = false
+		err = errors.New("the algorithm provided is not (yet) supported")
+		return
 	}
-	verify = false
-	err = errors.New("the algorithm provided is not (yet) supported")
-	return
 }
 
 func inArray(val string, array []string) bool {
