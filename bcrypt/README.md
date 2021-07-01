@@ -26,7 +26,7 @@ import (
 )
 
 func main() {
-  crypto, err := phccrypto.Use("bcrypt", phccrypto.Config{
+  crypto, err := phccrypto.Use(phccrypto.Bcrypt, phccrypto.Config{
     Rounds: 20,
   })
   if err != nil {

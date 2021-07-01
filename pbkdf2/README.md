@@ -28,7 +28,7 @@ import (
 )
 
 func main() {
-  crypto, err := phccrypto.Use("pbkdf2", phccrypto.Config{
+  crypto, err := phccrypto.Use(phccrypto.PBKDF2, phccrypto.Config{
     HashFunc: "sha512",
   })
   if err != nil {

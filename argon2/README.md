@@ -39,9 +39,8 @@ import (
 )
 
 func main() {
-  crypto, err := phccrypto.Use("argon2", phccrypto.Config{
+  crypto, err := phccrypto.Use(phccrypto.Argon2, phccrypto.Config{
     Parallelism: 3,
-    Variant: "i",
   })
   if err != nil {
     fmt.Println(err)
@@ -51,7 +50,7 @@ func main() {
   if err != nil {
     fmt.Println(err)
   }
-  fmt.Println(hash) // $argon2i$v=19$m=65536,t=16,p=3$8400b4e5f01f30092b794de34c61a6fdfea6b6b446560fda08a876bd11e9c62e$3fd77927d189...
+  fmt.Println(hash) // $argon2id$v=19$m=65536,t=16,p=3$8400b4e5f01f30092b794de34c61a6fdfea6b6b446560fda08a876bd11e9c62e$3fd77927d189...
 
   verify, err := phccrypto.Verify(hash, "password")
   if err != nil {
@@ -77,7 +76,7 @@ func main() {
 
   hash, err := argon2.Hash("password", argon2.Config{
     Parallelism: 3,
-    Variant: "i",
+    Variant: argon2.I,
   })
   if err != nil {
     fmt.Println(err)

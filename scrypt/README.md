@@ -28,7 +28,7 @@ import (
 )
 
 func main() {
-  crypto, err := phccrypto.Use("scrypt", phccrypto.Config{
+  crypto, err := phccrypto.Use(phccrypto.Scrypt, phccrypto.Config{
     Parallelism: 3,
   })
   if err != nil {
