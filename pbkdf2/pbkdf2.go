@@ -22,15 +22,18 @@ type Config struct {
 	Rounds   int
 	KeyLen   int
 	HashFunc string
+	SaltLen  int
 }
 
 const (
 	// ROUNDS is the iteration counts.
 	ROUNDS = 4096
 	// KEYLEN is how many bytes to generate as output.
-	KEYLEN = 32
+	KEY_LENGTH = 32
 	// DEFAULT_HASHFUNCTION is for calculating HMAC. Defaulting to sha256.
 	DEFAULT_HASHFUNCTION = "sha256"
+	// SALT_LENGTH is the default salth length in bytes.
+	SALT_LENGTH = 16
 )
 
 // Hash creates a PHC-formatted hash with config provided
@@ -39,14 +42,17 @@ func Hash(plain string, config Config) (string, error) {
 		config.Rounds = ROUNDS
 	}
 	if config.KeyLen == 0 {
-		config.KeyLen = KEYLEN
+		config.KeyLen = KEY_LENGTH
 	}
 	if config.HashFunc == "" {
 		config.HashFunc = DEFAULT_HASHFUNCTION
 	}
+	if config.SaltLen == 0 {
+		config.SaltLen = SALT_LENGTH
+	}
 
 	// minimum 64 bits, 128 bits is recommended
-	salt := make([]byte, 16)
+	salt := make([]byte, config.SaltLen)
 	io.ReadFull(rand.Reader, salt)
 
 	var hash []byte

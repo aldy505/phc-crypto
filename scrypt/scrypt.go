@@ -19,6 +19,7 @@ type Config struct {
 	Rounds      int
 	Parallelism int
 	KeyLen      int
+	SaltLen     int
 }
 
 const (
@@ -32,6 +33,8 @@ const (
 	ROUNDS = 8
 	// PARALLELISM is the parallelism factor (threads to run in parallel - affects the memory, CPU usage).
 	PARALLELISM = 1
+	// SALT_LENGTH is the default salth length in bytes.
+	SALT_LENGTH = 16
 )
 
 // Hash creates a PHC-formatted hash with config provided
@@ -48,8 +51,11 @@ func Hash(plain string, config Config) (string, error) {
 	if config.Parallelism == 0 {
 		config.Parallelism = PARALLELISM
 	}
+	if config.SaltLen == 0 {
+		config.SaltLen = SALT_LENGTH
+	}
 
-	salt := make([]byte, 16)
+	salt := make([]byte, config.SaltLen)
 	io.ReadFull(rand.Reader, salt)
 
 	hash, err := scrypt.Key([]byte(plain), salt, config.Cost, config.Rounds, config.Parallelism, config.KeyLen)

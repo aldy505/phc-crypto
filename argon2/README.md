@@ -23,8 +23,9 @@ All three modes allow specification by three parameters that control:
 | Time | `int` | 32768 | Number of iterations to perform |
 | Memory | `int` | 8 | Amount of memory (in kilobytes) to use |
 | Parallelism | `int` | 4 | Parallelism factor (threads to run in parallel). |
+| Variant | `Variant` | `argon2.ID` | Argon2 variant to be used (`argon2.ID` or `argon2.I`)|
 | KeyLen | `int` | 64 | How many bytes to generate as output. | 
-| Variant | `string` | id | Argon2 variant to be used (`id` or `i`)|
+| SaltLen | `int` | 16 | Salt length in bytes |
 
 ## Usage with PHC Crypto
 

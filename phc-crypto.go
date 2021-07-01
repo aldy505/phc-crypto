@@ -30,6 +30,7 @@ type Config struct {
 	Rounds      int
 	Parallelism int
 	KeyLen      int
+	SaltLen     int
 	Variant     argon2.Variant
 	HashFunc    string
 }

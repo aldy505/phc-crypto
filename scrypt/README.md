@@ -13,7 +13,8 @@ scrypt (pronounced "ess crypt") is a password-based key derivation function crea
 | Cost | `int` | 32768 | Iterations count (affects memory and CPU usage) |
 | Rounds | `int` | 8 | Block size (affects memory and CPU usage) |
 | Parallelism | `int` | 1 | Parallelism factor (threads to run in parallel - affects the memory, CPU usage). |
-| KeyLen | `int` | 32 | How many bytes to generate as output. | 
+| KeyLen | `int` | 32 | How many bytes to generate as output. |
+| SaltLen | `int` | 16 | Salt length in bytes |
 
 ## Usage with PHC Crypto
 

@@ -19,6 +19,7 @@ type Config struct {
 	Memory      int
 	Parallelism int
 	KeyLen      int
+	SaltLen     int
 	Variant     Variant
 }
 
@@ -33,8 +34,8 @@ const (
 )
 
 const (
-	// KEYLEN is the desired number of returned bytes
-	KEYLEN = 64
+	// KEY_LENGTH is the desired number of returned bytes
+	KEY_LENGTH = 64
 	// TIME is the number of iterations to perform
 	TIME = 16
 	// MEMORY is the a mount of memory (in kilobytes) to use
@@ -43,12 +44,14 @@ const (
 	PARALLELISM = 4
 	// DEFAULT_VARIANT combines the Argon2d and Argon2i
 	DEFAULT_VARIANT = ID
+	// SALT_LENGTH is the default salth length in bytes.
+	SALT_LENGTH = 32
 )
 
 // Hash creates a PHC-formatted hash with config provided
 func Hash(plain string, config Config) (string, error) {
 	if config.KeyLen == 0 {
-		config.KeyLen = KEYLEN
+		config.KeyLen = KEY_LENGTH
 	}
 	if config.Time == 0 {
 		config.Time = TIME
@@ -62,9 +65,12 @@ func Hash(plain string, config Config) (string, error) {
 	if config.Variant == -1 {
 		config.Variant = DEFAULT_VARIANT
 	}
+	if config.SaltLen == 0 {
+		config.SaltLen = SALT_LENGTH
+	}
 
 	// random-generated salt (16 bytes recommended for password hashing)
-	salt := make([]byte, 32)
+	salt := make([]byte, config.SaltLen)
 	io.ReadFull(rand.Reader, salt)
 
 	var hash []byte

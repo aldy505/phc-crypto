@@ -10,9 +10,10 @@ In cryptography, PBKDF1 and PBKDF2 (Password-Based Key Derivation Function 1 and
 
 | Key | Type | Default | Notes
 |---|---|---|---|
-| KeyLen | `int` | 32 | How many bytes to generate as output. |
 | Rounds | `int` | 4096 | Iteration counts. |
 | HashFunc | `string` | `sha256` | For calculating HMAC |
+| KeyLen | `int` | 32 | How many bytes to generate as output. |
+| SaltLen | `int` | 16 | Salt length in bytes |
 
 
 ## Usage with PHC Crypto
