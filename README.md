@@ -18,9 +18,8 @@ Bear in mind, these usage function might changed in the near future.
 * Argon2i & Argon2id
 * PBKDF2
 * Scrypt
-* Chacha20poly1305
 
-For details regarding configs, please refer to their own folders (linked).
+For details regarding configs, please refer to their own directory.
 
 ### Option 1 - Import all
 
@@ -61,6 +60,7 @@ func main() {
 $ go get github.com/aldy505/phc-crypto/bcrypt
 $ go get github.com/aldy505/phc-crypto/pbkdf2
 $ go get github.com/aldy505/phc-crypto/scrypt
+$ go get github.com/aldy505/phc-crypto/argon2
 ```
 
 ```go
