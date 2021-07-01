@@ -22,15 +22,15 @@ type Config struct {
 }
 
 const (
-	// How many bytes to generate as output.
+	// KEYLEN is how many bytes to generate as output.
 	KEYLEN = 32
-	// Iterations count (affects memory and CPU usage).
+	// COST is the iterations count (affects memory and CPU usage).
 	// Minimum for interactive login: 16384.
 	// Ideal for file encryption: 1048576.
 	COST = 32768
-	// Block size (affects memory and CPU usage).
+	// ROUNDS is the block size (affects memory and CPU usage).
 	ROUNDS = 8
-	// Parallelism factor (threads to run in parallel - affects the memory, CPU usage).
+	// PARALLELISM is the parallelism factor (threads to run in parallel - affects the memory, CPU usage).
 	PARALLELISM = 1
 )
 

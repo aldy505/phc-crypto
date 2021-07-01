@@ -19,20 +19,30 @@ type Config struct {
 	Memory      int
 	Parallelism int
 	KeyLen      int
-	Variant     string
+	Variant     Variant
 }
 
+// Variant sets up enum for available Argon2 variants
+type Variant int
+
 const (
-	// Desired number of returned bytes
+	// ID points to Argon2 id variant
+	ID Variant = iota
+	// I points to Argon2 i variant
+	I
+)
+
+const (
+	// KEYLEN is the desired number of returned bytes
 	KEYLEN = 64
-	// Number of iterations to perform
+	// TIME is the number of iterations to perform
 	TIME = 16
-	// Amount of memory (in kilobytes) to use
+	// MEMORY is the a mount of memory (in kilobytes) to use
 	MEMORY = 64 * 1024
-	// Degree of parallelism (i.e. number of threads)
+	// PARALLELISM is the degree of parallelism (i.e. number of threads)
 	PARALLELISM = 4
-	// Combines the Argon2d and Argon2i
-	DEFAULT_VARIANT = "id"
+	// DEFAULT_VARIANT combines the Argon2d and Argon2i
+	DEFAULT_VARIANT = ID
 )
 
 // Hash creates a PHC-formatted hash with config provided
@@ -49,7 +59,7 @@ func Hash(plain string, config Config) (string, error) {
 	if config.Parallelism == 0 {
 		config.Parallelism = PARALLELISM
 	}
-	if config.Variant == "" {
+	if config.Variant == -1 {
 		config.Variant = DEFAULT_VARIANT
 	}
 
@@ -58,14 +68,14 @@ func Hash(plain string, config Config) (string, error) {
 	io.ReadFull(rand.Reader, salt)
 
 	var hash []byte
-	if config.Variant == "id" {
+	if config.Variant == ID {
 		hash = argon2.IDKey([]byte(plain), salt, uint32(config.Time), uint32(config.Memory), uint8(config.Parallelism), uint32(config.KeyLen))
-	} else if config.Variant == "i" {
+	} else if config.Variant == I {
 		hash = argon2.Key([]byte(plain), salt, uint32(config.Time), uint32(config.Memory), uint8(config.Parallelism), uint32(config.KeyLen))
 	}
 	version := argon2.Version
 	hashString := format.Serialize(format.PHCConfig{
-		ID:      "argon2" + config.Variant,
+		ID:      "argon2" + returnVariant(config.Variant),
 		Version: version,
 		Params: map[string]interface{}{
 			"m": int(config.Memory),
@@ -120,4 +130,14 @@ func Verify(hash string, plain string) (bool, error) {
 		return true, nil
 	}
 	return false, nil
+}
+
+// returnVariant converts enum variant to string for serializing hash
+func returnVariant(variant Variant) string {
+	if variant == ID {
+		return "id"
+	} else if variant == I {
+		return "i"
+	}
+	return ""
 }

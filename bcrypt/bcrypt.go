@@ -15,7 +15,7 @@ type Config struct {
 }
 
 const (
-	// Cost of rounds, minimum of 4, maximum of 31.
+	// ROUNDS is the cost of rounds, minimum of 4, maximum of 31.
 	ROUNDS = 10
 )
 

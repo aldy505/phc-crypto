@@ -25,11 +25,11 @@ type Config struct {
 }
 
 const (
-	// Iteration counts.
+	// ROUNDS is the iteration counts.
 	ROUNDS = 4096
-	// How many bytes to generate as output.
+	// KEYLEN is how many bytes to generate as output.
 	KEYLEN = 32
-	// For calculating HMAC. Defaulting to sha256.
+	// DEFAULT_HASHFUNCTION is for calculating HMAC. Defaulting to sha256.
 	DEFAULT_HASHFUNCTION = "sha256"
 )
 
