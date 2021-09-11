@@ -35,6 +35,9 @@ type Config struct {
 	HashFunc    pbkdf2.HashFunction
 }
 
+var ErrAlgoNotSupported error = errors.New("the algorithm provided is not supported")
+var ErrEmptyField error = errors.New("function parameters must not be empty")
+
 // Use initiates the hash/verify function.
 // Available hash functions are: bcrypt, scrypt, argon2, pbkdf2.
 // Please refer to each hash folder for configuration information.
@@ -72,6 +75,12 @@ func Use(name Algorithm, config Config) (*Algo, error) {
 
 // Hash returns a PHC formatted string of a hash function (that was initiated from Use).
 func (a *Algo) Hash(plain string) (hash string, err error) {
+	if plain == "" {
+		hash = ""
+		err = ErrEmptyField
+		return
+	}
+
 	switch a.Name {
 	case Scrypt:
 		hash, err = scrypt.Hash(plain, scrypt.Config{
@@ -104,13 +113,19 @@ func (a *Algo) Hash(plain string) (hash string, err error) {
 		return
 	default:
 		hash = ""
-		err = errors.New("the algorithm provided is not supported")
+		err = ErrAlgoNotSupported
 		return
 	}
 }
 
 // Verify returns a boolean of a hash function (that was initiated from Use).
 func (a *Algo) Verify(hash, plain string) (verify bool, err error) {
+	if hash == "" || plain == "" {
+		verify = false
+		err = ErrEmptyField
+		return
+	}
+
 	switch a.Name {
 	case Scrypt:
 		verify, err = scrypt.Verify(hash, plain)
@@ -126,7 +141,7 @@ func (a *Algo) Verify(hash, plain string) (verify bool, err error) {
 		return
 	default:
 		verify = false
-		err = errors.New("the algorithm provided is not (yet) supported")
+		err = ErrAlgoNotSupported
 		return
 	}
 }

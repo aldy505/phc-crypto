@@ -48,6 +48,8 @@ const (
 	SALT_LENGTH = 32
 )
 
+var ErrEmptyField error = errors.New("function parameters must not be empty")
+
 // Hash creates a PHC-formatted hash with config provided
 func Hash(plain string, config Config) (string, error) {
 	if config.KeyLen == 0 {
@@ -62,7 +64,7 @@ func Hash(plain string, config Config) (string, error) {
 	if config.Parallelism == 0 {
 		config.Parallelism = PARALLELISM
 	}
-	if config.Variant == -1 {
+	if config.Variant < 0 || config.Variant > 1 {
 		config.Variant = DEFAULT_VARIANT
 	}
 	if config.SaltLen == 0 {

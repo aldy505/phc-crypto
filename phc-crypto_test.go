@@ -53,7 +53,7 @@ func TestHash(t *testing.T) {
 			}
 
 			_, err := crypto.Verify("something else", "something")
-			if err.Error() != "the algorithm provided is not (yet) supported" {
+			if err.Error() != "the algorithm provided is not supported" {
 				t.Error("something is wrong:", crypto.Name, "with", err.Error())
 			}
 		})
