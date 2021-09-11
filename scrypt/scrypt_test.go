@@ -78,3 +78,67 @@ func TestVerify(t *testing.T) {
 		}
 	})
 }
+
+func TestError(t *testing.T) {
+	t.Run("should return error", func(t *testing.T) {
+		hashString := "$str$v=0$ln=100,r=8,p=2$invalidSalt$invalidHash"
+		_, err := scrypt.Verify(hashString, "something")
+		if err == nil || err.Error() != "hashed string is not scrypt instance" {
+			t.Error("error should have been thrown:", err)
+		}
+	})
+
+	t.Run("should complain on empty function parameters", func(t *testing.T) {
+		_, err := scrypt.Hash("", scrypt.Config{})
+		if err == nil || err.Error() != "function parameters must not be empty" {
+			t.Error("error should have been thrown:", err)
+		}
+	})
+
+	t.Run("should complain on empty function parameters", func(t *testing.T) {
+		_, err := scrypt.Verify("", "")
+		if err == nil || err.Error() != "function parameters must not be empty" {
+			t.Error("error should have been thrown:", err)
+		}
+	})
+
+	t.Run("should fail decoding hex string - hash", func(t *testing.T) {
+		hashString := "$scrypt$v=0$ln=100,r=8,p=2$invalidSalt$invalidHash"
+		_, err := scrypt.Verify(hashString, "something")
+		if err == nil {
+			t.Error("error should have been thrown:", err)
+		}
+	})
+
+	t.Run("should fail decoding hex string - hash", func(t *testing.T) {
+		hashString := "$scrypt$v=0$ln=100,r=8,p=2$invalidSalt$59ddeb9a31a64685314c9c58415088dc22c088bd11fe6f55ce3b55bdb1feab3d"
+		_, err := scrypt.Verify(hashString, "something")
+		if err == nil {
+			t.Error("error should have been thrown:", err)
+		}
+	})
+
+	t.Run("should fail parsing int - 1", func(t *testing.T) {
+		hashString := "$scrypt$v=0$ln=a,r=8,p=2$e845024f7c76d010080e49f31838d0e1$59ddeb9a31a64685314c9c58415088dc22c088bd11fe6f55ce3b55bdb1feab3d"
+		_, err := scrypt.Verify(hashString, "something")
+		if err == nil {
+			t.Error("error should have been thrown:", err)
+		}
+	})
+
+	t.Run("should fail parsing int - 2", func(t *testing.T) {
+		hashString := "$scrypt$v=0$ln=100,r=a,p=2$e845024f7c76d010080e49f31838d0e1$59ddeb9a31a64685314c9c58415088dc22c088bd11fe6f55ce3b55bdb1feab3d"
+		_, err := scrypt.Verify(hashString, "something")
+		if err == nil {
+			t.Error("error should have been thrown:", err)
+		}
+	})
+
+	t.Run("should fail parsing int - 3", func(t *testing.T) {
+		hashString := "$scrypt$v=0$ln=100,r=8,p=a$e845024f7c76d010080e49f31838d0e1$59ddeb9a31a64685314c9c58415088dc22c088bd11fe6f55ce3b55bdb1feab3d"
+		_, err := scrypt.Verify(hashString, "something")
+		if err == nil {
+			t.Error("error should have been thrown:", err)
+		}
+	})
+}
