@@ -49,7 +49,7 @@ type Config struct {
 //			// Change the scope name to your prefered hashing algorithm
 //			// Available options are: Bcrypt, Scrypt, Argon2, PBKDF2
 //			crypto, err := phccrypto.Use(phccrypto.Scrypt, phccrypto.Config{})
-//			
+//
 //			hash, err := crypto.Hash("password123")
 //			if err != nil {
 //				fmt.Println(err)
