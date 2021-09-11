@@ -29,10 +29,6 @@ All three modes allow specification by three parameters that control:
 
 ## Usage with PHC Crypto
 
-```bash
-$ go get github.com/aldy505/phc-crypto
-```
-
 ```go
 import (
   "fmt"
@@ -63,10 +59,6 @@ func main() {
 
 ## Standalone usage
 
-```bash
-$ go get github.com/aldy505/phc-crypto/argon2
-```
-
 ```go
 import (
   "fmt"
@@ -74,7 +66,6 @@ import (
 )
 
 func main() {
-
   hash, err := argon2.Hash("password", argon2.Config{
     Parallelism: 3,
     Variant: argon2.I,

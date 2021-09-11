@@ -18,10 +18,6 @@ scrypt (pronounced "ess crypt") is a password-based key derivation function crea
 
 ## Usage with PHC Crypto
 
-```bash
-$ go get github.com/aldy505/phc-crypto
-```
-
 ```go
 import (
   "fmt"
@@ -52,10 +48,6 @@ func main() {
 
 ## Standalone usage
 
-```bash
-$ go get github.com/aldy505/phc-crypto/scrypt
-```
-
 ```go
 import (
   "fmt"
@@ -63,7 +55,6 @@ import (
 )
 
 func main() {
-
   hash, err := scrypt.Hash("password", scrypt.Config{
     Parallelism: 3,
   })

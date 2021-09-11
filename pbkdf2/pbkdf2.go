@@ -70,6 +70,21 @@ func hashFuncToName(h HashFunction) string {
 }
 
 // Hash creates a PHC-formatted hash with config provided
+//
+//      import (
+//        "fmt"
+//        "github.com/aldy505/phc-crypto/pbkdf2"
+//      )
+//
+//      func main() {
+//        hash, err := pbkdf2.Hash("password", pbkdf2.Config{
+//          HashFunc: pbkdf2.SHA512,
+//        })
+//        if err != nil {
+//          fmt.Println(err)
+//        }
+//        fmt.Println(hash) // $pbkdf2sha512$v=0$i=4096$87a39b3cf30626bc7cf6534ac3a14ddf$d32093416bf521ff0...
+//      }
 func Hash(plain string, config Config) (string, error) {
 	if plain == "" {
 		return "", ErrEmptyField
@@ -122,6 +137,21 @@ func Hash(plain string, config Config) (string, error) {
 }
 
 // Verify checks the hash if it's equal (by an algorithm) to plain text provided.
+//
+//      import (
+//        "fmt"
+//        "github.com/aldy505/phc-crypto/pbkdf2"
+//      )
+//
+//      func main() {
+//        hash := "$pbkdf2sha512$v=0$i=4096$87a39b3cf30626bc7cf6534ac3a14ddf$d32093416bf521ff0..."
+//
+//        verify, err := pbkdf2.Verify(hash, "password")
+//        if err != nil {
+//          fmt.Println(err)
+//        }
+//        fmt.Println(verify) // true
+//      }
 func Verify(hash string, plain string) (bool, error) {
 	if hash == "" || plain == "" {
 		return false, ErrEmptyField

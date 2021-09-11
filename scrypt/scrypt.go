@@ -40,6 +40,21 @@ const (
 var ErrEmptyField error = errors.New("function parameters must not be empty")
 
 // Hash creates a PHC-formatted hash with config provided
+//
+//      import (
+//      	"fmt"
+//      	"github.com/aldy505/phc-crypto/scrypt"
+//      )
+//
+//      func main() {
+//      	hash, err := scrypt.Hash("password", scrypt.Config{
+//      		Parallelism: 3,
+//      	})
+//      	if err != nil {
+//      		fmt.Println(err)
+//      	}
+//      	fmt.Println(hash) // $scrypt$v=0$p=3,ln=32768,r=8$64ecb15ec1aa81bc403a892efb2289ce$4fc8d3bc...
+//      }
 func Hash(plain string, config Config) (string, error) {
 	if plain == "" {
 		return "", ErrEmptyField
@@ -85,6 +100,21 @@ func Hash(plain string, config Config) (string, error) {
 }
 
 // Verify checks the hash if it's equal (by an algorithm) to plain text provided.
+//
+//		import (
+//			"fmt"
+//			"github.com/aldy505/phc-crypto/scrypt"
+//		)
+//
+//		func main() {
+//			hash := "$scrypt$v=0$p=3,ln=32768,r=8$64ecb15ec1aa81bc403a892efb2289ce$4fc8d3bc..."
+//
+//			verify, err := scrypt.Verify(hash, "password")
+//			if err != nil {
+//				fmt.Println(err)
+//			}
+//			fmt.Println(verify) // true
+//		}
 func Verify(hash string, plain string) (bool, error) {
 	if hash == "" || plain == "" {
 		return false, ErrEmptyField

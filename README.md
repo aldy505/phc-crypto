@@ -23,10 +23,6 @@ For details regarding configs, please refer to their own directory.
 
 ### Option 1 - Import all
 
-```bash
-$ go get github.com/aldy505/phc-crypto
-```
-
 ```go
 import (
   "fmt"
@@ -55,14 +51,6 @@ func main() {
 
 ### Option 2 - Import specific hash function
 
-```bash
-# You can pick only one of them
-$ go get github.com/aldy505/phc-crypto/bcrypt
-$ go get github.com/aldy505/phc-crypto/pbkdf2
-$ go get github.com/aldy505/phc-crypto/scrypt
-$ go get github.com/aldy505/phc-crypto/argon2
-```
-
 ```go
 import "github.com/aldy505/phc-crypto/scrypt"
 
@@ -88,6 +76,7 @@ Yes please! I'm still new to Go and I create this module (or package if you will
 
 ## LICENSE
 
+```
 MIT License
 
 Copyright (c) 2021-present Reinaldy Rafli and PHC Crypto collaborators
@@ -109,3 +98,4 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+```
