@@ -47,6 +47,9 @@ const (
 	MD5
 )
 
+var ErrEmptyField error = errors.New("function parameters must not be empty")
+var ErrInvalidHashFunction error = errors.New("invalid hash function was provided")
+
 func hashFuncToName(h HashFunction) string {
 	switch h {
 	case SHA1:
@@ -68,13 +71,17 @@ func hashFuncToName(h HashFunction) string {
 
 // Hash creates a PHC-formatted hash with config provided
 func Hash(plain string, config Config) (string, error) {
+	if plain == "" {
+		return "", ErrEmptyField
+	}
+
 	if config.Rounds == 0 {
 		config.Rounds = ROUNDS
 	}
 	if config.KeyLen == 0 {
 		config.KeyLen = KEY_LENGTH
 	}
-	if config.HashFunc == -1 {
+	if config.HashFunc < 0 || config.HashFunc > 5 {
 		config.HashFunc = DEFAULT_HASHFUNCTION
 	}
 	if config.SaltLen == 0 {
@@ -100,8 +107,6 @@ func Hash(plain string, config Config) (string, error) {
 		hash = pbkdf2.Key([]byte(plain), salt, config.Rounds, config.KeyLen, sha512.New384)
 	case MD5:
 		hash = pbkdf2.Key([]byte(plain), salt, config.Rounds, config.KeyLen, md5.New)
-	default:
-		return "", errors.New("invalid hash function was provided")
 	}
 
 	hashString := format.Serialize(format.PHCConfig{
@@ -118,6 +123,10 @@ func Hash(plain string, config Config) (string, error) {
 
 // Verify checks the hash if it's equal (by an algorithm) to plain text provided.
 func Verify(hash string, plain string) (bool, error) {
+	if hash == "" || plain == "" {
+		return false, ErrEmptyField
+	}
+
 	deserialize := format.Deserialize(hash)
 
 	if !strings.HasPrefix(deserialize.ID, "pbkdf2") {
@@ -158,7 +167,7 @@ func Verify(hash string, plain string) (bool, error) {
 	case "md5":
 		verifyHash = pbkdf2.Key([]byte(plain), salt, int(rounds), keyLen, md5.New)
 	default:
-		return false, errors.New("we don't support " + hashFunc + " for a hash function.")
+		return false, ErrInvalidHashFunction
 	}
 
 	if subtle.ConstantTimeCompare(decodedHash, verifyHash) == 1 {
