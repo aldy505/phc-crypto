@@ -26,36 +26,136 @@ func TestUse(t *testing.T) {
 		crypto, _ := phccrypto.Use(4, phccrypto.Config{})
 
 		_, err := crypto.Hash("not so shabby")
-		if err.Error() != "the algorithm provided is not supported" {
+		if err == nil || err.Error() != "the algorithm provided is not supported" {
 			t.Error("something is wrong:", crypto.Name, "with 4")
 		}
 	})
 }
 
-func TestHash(t *testing.T) {
-	t.Run("forced not supported algorithms", func(t *testing.T) {
-		t.Run("should return error on hash", func(t *testing.T) {
-			crypto := &phccrypto.Algo{
-				Name:   5,
-				Config: &phccrypto.Config{},
-			}
+func TestAlgoNotSupported(t *testing.T) {
+	t.Run("hash", func(t *testing.T) {
+		crypto := &phccrypto.Algo{
+			Name:   5,
+			Config: &phccrypto.Config{},
+		}
 
-			_, err := crypto.Hash("something")
-			if err.Error() != "the algorithm provided is not supported" {
-				t.Error("something is wrong:", crypto.Name, "with", err.Error())
-			}
-		})
+		_, err := crypto.Hash("something")
+		if err == nil || err.Error() != "the algorithm provided is not supported" {
+			t.Error("something is wrong:", crypto.Name, "with", err.Error())
+		}
+	})
 
-		t.Run("should return error on verify", func(t *testing.T) {
-			crypto := &phccrypto.Algo{
-				Name:   5,
-				Config: &phccrypto.Config{},
-			}
+	t.Run("verify", func(t *testing.T) {
+		crypto := &phccrypto.Algo{
+			Name:   5,
+			Config: &phccrypto.Config{},
+		}
 
-			_, err := crypto.Verify("something else", "something")
-			if err.Error() != "the algorithm provided is not supported" {
-				t.Error("something is wrong:", crypto.Name, "with", err.Error())
-			}
-		})
+		_, err := crypto.Verify("something else", "something")
+		if err == nil || err.Error() != "the algorithm provided is not supported" {
+			t.Error("something is wrong:", crypto.Name, "with", err.Error())
+		}
+	})
+}
+
+func TestArgon(t *testing.T) {
+	crypto, err := phccrypto.Use(phccrypto.Argon2, phccrypto.Config{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	hash, err := crypto.Hash("password123")
+	if err != nil {
+		t.Error(err)
+	}
+
+	verify, err := crypto.Verify(hash, "password123")
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !verify {
+		t.Error("verify function returned false")
+	}
+}
+
+func TestBcrypt(t *testing.T) {
+	crypto, err := phccrypto.Use(phccrypto.Bcrypt, phccrypto.Config{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	hash, err := crypto.Hash("password123")
+	if err != nil {
+		t.Error(err)
+	}
+
+	verify, err := crypto.Verify(hash, "password123")
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !verify {
+		t.Error("verify function returned false")
+	}
+}
+
+func TestPbkdf2(t *testing.T) {
+	crypto, err := phccrypto.Use(phccrypto.PBKDF2, phccrypto.Config{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	hash, err := crypto.Hash("password123")
+	if err != nil {
+		t.Error(err)
+	}
+
+	verify, err := crypto.Verify(hash, "password123")
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !verify {
+		t.Error("verify function returned false")
+	}
+}
+
+func TestScrypt(t *testing.T) {
+	crypto, err := phccrypto.Use(phccrypto.Scrypt, phccrypto.Config{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	hash, err := crypto.Hash("password123")
+	if err != nil {
+		t.Error(err)
+	}
+
+	verify, err := crypto.Verify(hash, "password123")
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !verify {
+		t.Error("verify function returned false")
+	}
+}
+
+func TestError(t *testing.T) {
+	t.Run("should complain on empty function parameters", func(t *testing.T) {
+		algo := &phccrypto.Algo{}
+		_, err := algo.Hash("")
+		if err == nil || err.Error() != "function parameters must not be empty" {
+			t.Error("error should have been thrown:", err)
+		}
+	})
+
+	t.Run("should complain on empty function parameters", func(t *testing.T) {
+		algo := &phccrypto.Algo{}
+		_, err := algo.Verify("", "")
+		if err == nil || err.Error() != "function parameters must not be empty" {
+			t.Error("error should have been thrown:", err)
+		}
 	})
 }
