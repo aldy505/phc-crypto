@@ -21,7 +21,7 @@ func TestUse(t *testing.T) {
 			}
 		}
 	})
-	
+
 	t.Run("should return error because of name mismatch", func(t *testing.T) {
 		crypto, _ := phccrypto.Use(4, phccrypto.Config{})
 
@@ -45,7 +45,7 @@ func TestHash(t *testing.T) {
 				t.Error("something is wrong:", crypto.Name, "with", err.Error())
 			}
 		})
-		
+
 		t.Run("should return error on verify", func(t *testing.T) {
 			crypto := &phccrypto.Algo{
 				Name:   5,

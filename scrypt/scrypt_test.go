@@ -41,7 +41,7 @@ func TestVerify(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		
+
 		verify, err := scrypt.Verify(hash, "password123")
 		if err != nil {
 			t.Error(err)
@@ -67,7 +67,7 @@ func TestVerify(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-	
+
 		typeof := reflect.TypeOf(verify).Kind()
 		if typeof != reflect.Bool {
 			t.Error("returned type is not boolean")

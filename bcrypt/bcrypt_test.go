@@ -7,7 +7,6 @@ import (
 	"github.com/aldy505/phc-crypto/bcrypt"
 )
 
-
 func TestHash(t *testing.T) {
 	t.Run("should be ok without additional config", func(t *testing.T) {
 		hash, err := bcrypt.Hash("password123", bcrypt.Config{})
@@ -52,7 +51,7 @@ func TestVerify(t *testing.T) {
 		if typeof != reflect.Bool {
 			t.Error("returned type is not boolean")
 		}
-		
+
 		if !verify {
 			t.Error("verify function returned false")
 		}
@@ -73,7 +72,7 @@ func TestVerify(t *testing.T) {
 		if typeof != reflect.Bool {
 			t.Error("returned type is not boolean")
 		}
-		
+
 		if verify {
 			t.Error("verify function returned false")
 		}

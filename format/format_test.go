@@ -1,6 +1,7 @@
 package format_test
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/aldy505/phc-crypto/format"
@@ -8,21 +9,20 @@ import (
 
 func TestSerialize(t *testing.T) {
 	serialized := format.Serialize(format.PHCConfig{
-		ID: "argon2id",
+		ID:      "argon2id",
 		Version: 2,
 		Params: map[string]interface{}{
 			"Something": "New",
 			"Somewhere": "Far",
-			"Meaning": 42,
+			"Meaning":   42,
 		},
 		Salt: "SaltyText",
 		Hash: "HashyText",
 	})
 
-	expected := "$argon2id$v=2$Something=New,Somewhere=Far,Meaning=42$SaltyText$HashyText"
-	expected2 := "$argon2id$v=2$Somewhere=Far,Meaning=42,Something=New$SaltyText$HashyText"
-
-	if serialized != expected && serialized != expected2 {
+	destructured := strings.Split(serialized, "$")
+	params := "Something=New,Somewhere=Far,Meaning=42"
+	if destructured[1] != "argon2id" || destructured[2] != "v=2" || len(destructured[3]) != len(params) || destructured[4] != "SaltyText" || destructured[5] != "HashyText" {
 		t.Error("Unexpected output: ", serialized)
 	}
 }
