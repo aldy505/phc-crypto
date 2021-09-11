@@ -9,7 +9,9 @@ import (
 
 func TestHash(t *testing.T) {
 	t.Run("should be ok without additional config", func(t *testing.T) {
-		hash, err := argon2.Hash("password123", argon2.Config{})
+		hash, err := argon2.Hash("password123", argon2.Config{
+			Variant: 2,
+		})
 		if err != nil {
 			t.Error(err)
 		}
@@ -36,8 +38,10 @@ func TestHash(t *testing.T) {
 }
 
 func TestVerify(t *testing.T) {
-	t.Run("verify should return true", func(t *testing.T) {
-		hash, err := argon2.Hash("password123", argon2.Config{})
+	t.Run("verify should return true - argon2id", func(t *testing.T) {
+		hash, err := argon2.Hash("password123", argon2.Config{
+			Variant: argon2.ID,
+		})
 		if err != nil {
 			t.Error(err)
 		}
@@ -53,6 +57,27 @@ func TestVerify(t *testing.T) {
 			t.Error("verify function returned false")
 		}
 	})
+
+	t.Run("verify should return true - argon2i", func(t *testing.T) {
+		hash, err := argon2.Hash("password123", argon2.Config{
+			Variant: argon2.I,
+		})
+		if err != nil {
+			t.Error(err)
+		}
+		verify, err := argon2.Verify(hash, "password123")
+		if err != nil {
+			t.Error(err)
+		}
+		typeof := reflect.TypeOf(verify).Kind()
+		if typeof != reflect.Bool {
+			t.Error("returned type is not boolean")
+		}
+		if !verify {
+			t.Error("verify function returned false")
+		}
+	})
+
 	t.Run("verify should return false", func(t *testing.T) {
 		hash, err := argon2.Hash("password123", argon2.Config{})
 		if err != nil {
@@ -68,6 +93,40 @@ func TestVerify(t *testing.T) {
 		}
 		if verify {
 			t.Error("verify function returned false")
+		}
+	})
+}
+
+func TestError(t *testing.T) {
+	t.Run("should return error", func(t *testing.T) {
+		hashString := "$argon3$v=2$t=16,m=64,p=32$invalidSalt$invalidHash"
+		_, err := argon2.Verify(hashString, "something")
+		if err == nil || err.Error() != "hashed string is not argon instance" {
+			t.Error("error should have been thrown:", err)
+		}
+	})
+
+	t.Run("should fail parsing int", func(t *testing.T) {
+		hashString := "$argon2id$v=2$t=a,m=64,p=32$invalidSalt$invalidHash"
+		_, err := argon2.Verify(hashString, "something")
+		if err == nil {
+			t.Error("error should have been thrown:", err)
+		}
+	})
+
+	t.Run("should fail parsing int 2", func(t *testing.T) {
+		hashString := "$argon2id$v=2$t=16,m=a,p=32$invalidSalt$invalidHash"
+		_, err := argon2.Verify(hashString, "something")
+		if err == nil {
+			t.Error("error should have been thrown:", err)
+		}
+	})
+
+	t.Run("should fail parsing int 2", func(t *testing.T) {
+		hashString := "$argon2id$v=2$t=16,m=64,p=a$invalidSalt$invalidHash"
+		_, err := argon2.Verify(hashString, "something")
+		if err == nil {
+			t.Error("error should have been thrown:", err)
 		}
 	})
 }
