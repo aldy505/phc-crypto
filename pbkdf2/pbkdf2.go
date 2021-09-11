@@ -21,7 +21,7 @@ import (
 type Config struct {
 	Rounds   int
 	KeyLen   int
-	HashFunc string
+	HashFunc HashFunction
 	SaltLen  int
 }
 
@@ -31,10 +31,40 @@ const (
 	// KEYLEN is how many bytes to generate as output.
 	KEY_LENGTH = 32
 	// DEFAULT_HASHFUNCTION is for calculating HMAC. Defaulting to sha256.
-	DEFAULT_HASHFUNCTION = "sha256"
+	DEFAULT_HASHFUNCTION = SHA256
 	// SALT_LENGTH is the default salth length in bytes.
 	SALT_LENGTH = 16
 )
+
+type HashFunction int
+
+const (
+	SHA1 HashFunction = iota
+	SHA256
+	SHA224
+	SHA512
+	SHA384
+	MD5
+)
+
+func hashFuncToName(h HashFunction) string {
+	switch h {
+	case SHA1:
+		return "sha1"
+	case SHA256:
+		return "sha256"
+	case SHA224:
+		return "sha224"
+	case SHA512:
+		return "sha512"
+	case SHA384:
+		return "sha384"
+	case MD5:
+		return "md5"
+	default:
+		return ""
+	}
+}
 
 // Hash creates a PHC-formatted hash with config provided
 func Hash(plain string, config Config) (string, error) {
@@ -44,7 +74,7 @@ func Hash(plain string, config Config) (string, error) {
 	if config.KeyLen == 0 {
 		config.KeyLen = KEY_LENGTH
 	}
-	if config.HashFunc == "" {
+	if config.HashFunc == -1 {
 		config.HashFunc = DEFAULT_HASHFUNCTION
 	}
 	if config.SaltLen == 0 {
@@ -58,24 +88,24 @@ func Hash(plain string, config Config) (string, error) {
 	var hash []byte
 
 	switch config.HashFunc {
-	case "sha1":
+	case SHA1:
 		hash = pbkdf2.Key([]byte(plain), salt, config.Rounds, config.KeyLen, sha1.New)
-	case "sha256":
+	case SHA256:
 		hash = pbkdf2.Key([]byte(plain), salt, config.Rounds, config.KeyLen, sha256.New)
-	case "sha224":
+	case SHA224:
 		hash = pbkdf2.Key([]byte(plain), salt, config.Rounds, config.KeyLen, sha256.New224)
-	case "sha512":
+	case SHA512:
 		hash = pbkdf2.Key([]byte(plain), salt, config.Rounds, config.KeyLen, sha512.New)
-	case "sha384":
+	case SHA384:
 		hash = pbkdf2.Key([]byte(plain), salt, config.Rounds, config.KeyLen, sha512.New384)
-	case "md5":
+	case MD5:
 		hash = pbkdf2.Key([]byte(plain), salt, config.Rounds, config.KeyLen, md5.New)
 	default:
-		return "", errors.New("we don't support " + config.HashFunc + " for a hash function.")
+		return "", errors.New("invalid hash function was provided")
 	}
 
 	hashString := format.Serialize(format.PHCConfig{
-		ID: "pbkdf2" + config.HashFunc,
+		ID: "pbkdf2" + hashFuncToName(config.HashFunc),
 		Params: map[string]interface{}{
 			"i": config.Rounds,
 		},

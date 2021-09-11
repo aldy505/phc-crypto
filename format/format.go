@@ -45,7 +45,7 @@ func Deserialize(hash string) PHCConfig {
 		}
 	}
 
-	version, _ := strconv.Atoi(hashArray[2])
+	version, _ := strconv.Atoi(strings.Replace(hashArray[2], "v=", "", 1))
 	return PHCConfig{
 		ID:      hashArray[1],
 		Version: version,
