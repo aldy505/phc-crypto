@@ -78,3 +78,27 @@ func TestVerify(t *testing.T) {
 		}
 	})
 }
+
+func TestError(t *testing.T) {
+	t.Run("should return error", func(t *testing.T) {
+		hashString := "$bct$v=0$r=32$invalidSalt$invalidHash"
+		_, err := bcrypt.Verify(hashString, "something")
+		if err == nil || err.Error() != "hashed string is not a bcrypt instance" {
+			t.Error("error should have been thrown:", err)
+		}
+	})
+
+	t.Run("should complain of empty function parameters", func(t *testing.T) {
+		_, err := bcrypt.Hash("", bcrypt.Config{})
+		if err == nil || err.Error() != "function parameters must not be empty" {
+			t.Error("error should have been thrown:", err)
+		}
+	})
+
+	t.Run("should complain of empty function parameters", func(t *testing.T) {
+		_, err := bcrypt.Verify("", "")
+		if err == nil || err.Error() != "function parameters must not be empty" {
+			t.Error("error should have been thrown:", err)
+		}
+	})
+}
