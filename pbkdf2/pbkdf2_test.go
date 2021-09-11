@@ -21,7 +21,7 @@ func TestHash(t *testing.T) {
 	})
 	t.Run("should be ok with additional config", func(t *testing.T) {
 		hash, err := pbkdf2.Hash("password123", pbkdf2.Config{
-			HashFunc: pbkdf2.MD5,
+			HashFunc: 10,
 			Rounds:   8,
 		})
 		if err != nil {
@@ -191,15 +191,23 @@ func TestError(t *testing.T) {
 	})
 
 	t.Run("should fail parsing int", func(t *testing.T) {
-		hashString := "$pbkdf2sha256$v=0$i=a$invalidSalt$invalidHash"
+		hashString := "$pbkdf2sha256$v=0$i=a$d172c14e9955bf4e4c01422f2af10d4f$ad21bd7d8568ce800754aafb6630e7e909006c425489778f8016d3471951d3cc"
 		_, err := pbkdf2.Verify(hashString, "something")
 		if err == nil {
 			t.Error("error should have been thrown:", err)
 		}
 	})
 
-	t.Run("should fail parsing hex", func(t *testing.T) {
-		hashString := "$pbkdf2sha256$v=0$i=4096$invalidSalt$invalidHash"
+	t.Run("should fail parsing hex - hash", func(t *testing.T) {
+		hashString := "$pbkdf2sha256$v=0$i=4096$d172c14e9955bf4e4c01422f2af10d4f$invalidHash"
+		_, err := pbkdf2.Verify(hashString, "something")
+		if err == nil {
+			t.Error("error should have been thrown:", err)
+		}
+	})
+
+	t.Run("should fail parsing hex - salt", func(t *testing.T) {
+		hashString := "$pbkdf2sha256$v=0$i=4096$invalidSalt$ad21bd7d8568ce800754aafb6630e7e909006c425489778f8016d3471951d3cc"
 		_, err := pbkdf2.Verify(hashString, "something")
 		if err == nil {
 			t.Error("error should have been thrown:", err)
