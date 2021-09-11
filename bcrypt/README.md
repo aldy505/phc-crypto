@@ -15,10 +15,6 @@ bcrypt is a password-hashing function designed by Niels Provos and David Mazièr
 
 ## Usage with PHC Crypto
 
-```bash
-$ go get github.com/aldy505/phc-crypto
-```
-
 ```go
 import (
   "fmt"
@@ -49,10 +45,6 @@ func main() {
 
 ## Standalone usage
 
-```bash
-$ go get github.com/aldy505/phc-crypto/bcrypt
-```
-
 ```go
 import (
   "fmt"
@@ -60,7 +52,6 @@ import (
 )
 
 func main() {
-
   hash, err := bcrypt.Hash("password", bcrypt.Config{
     Rounds: 12,
   })

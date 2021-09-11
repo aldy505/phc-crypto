@@ -11,16 +11,12 @@ In cryptography, PBKDF1 and PBKDF2 (Password-Based Key Derivation Function 1 and
 | Key | Type | Default | Notes
 |---|---|---|---|
 | Rounds | `int` | 4096 | Iteration counts. |
-| HashFunc | `string` | `sha256` | For calculating HMAC |
+| HashFunc | `HashFunction` | `pbkdf2.SHA256` | For calculating HMAC. Available options: `pbkdf2.SHA1`, `pbkdf2.SHA256`, `pbkdf2.SHA224`, `pbkdf2.SHA512`, `pbkdf2.SHA384`, `pbkdf2.MD5` |
 | KeyLen | `int` | 32 | How many bytes to generate as output. |
 | SaltLen | `int` | 16 | Salt length in bytes |
 
 
 ## Usage with PHC Crypto
-
-```bash
-$ go get github.com/aldy505/phc-crypto
-```
 
 ```go
 import (
@@ -29,9 +25,7 @@ import (
 )
 
 func main() {
-  crypto, err := phccrypto.Use(phccrypto.PBKDF2, phccrypto.Config{
-    HashFunc: "sha512",
-  })
+  crypto, err := phccrypto.Use(phccrypto.PBKDF2, phccrypto.Config{})
   if err != nil {
     fmt.Println(err)
   }
@@ -52,10 +46,6 @@ func main() {
 
 ## Standalone usage
 
-```bash
-$ go get github.com/aldy505/phc-crypto/pbkdf2
-```
-
 ```go
 import (
   "fmt"
@@ -63,9 +53,8 @@ import (
 )
 
 func main() {
-
   hash, err := pbkdf2.Hash("password", pbkdf2.Config{
-    HashFunc: "sha512",
+    HashFunc: pbkdf2.SHA512,
   })
   if err != nil {
     fmt.Println(err)
