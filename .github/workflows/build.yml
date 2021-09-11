@@ -1,10 +1,10 @@
-name: Build test
+name: OS test
 
 on: [pull_request, push]
 
 jobs:
-  build-test:
-    name: Build test
+  os-test:
+    name: OS test
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -19,5 +19,5 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
 
-      - name: Build
-        run: go build phc-crypto.go
+      - name: Test
+        run: go test -v -race -coverprofile=coverage.out -covermode=atomic -failfast ./...

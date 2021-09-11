@@ -43,27 +43,27 @@ var ErrEmptyField error = errors.New("function parameters must not be empty")
 // Please refer to each hash folder for configuration information.
 //
 //      import (
-//      	"fmt"
-//      	"github.com/aldy505/phc-crypto"
+//        "fmt"
+//        "github.com/aldy505/phc-crypto"
 //      )
 //
 //      func main() {
 //      	// Create a crypto instance
 //      	// Change the scope name to your prefered hashing algorithm
 //      	// Available options are: Bcrypt, Scrypt, Argon2, PBKDF2
-//      	crypto, err := phccrypto.Use(phccrypto.Scrypt, phccrypto.Config{})
+//        crypto, err := phccrypto.Use(phccrypto.Scrypt, phccrypto.Config{})
 //
 //        hash, err := crypto.Hash("password123")
 //        if err != nil {
-//        	fmt.Println(err)
+//          fmt.Println(err)
 //        }
 //        fmt.Println(hash) // returns string ($scrypt$v=0$p=1,ln=32768,r=8$402ffb0b23cd3d3a$62daeae2ac...)
 //
-//      	verify, err := crypto.Verify(hash, "password123")
-//      	if err != nil {
-//      		fmt.Println(err)
-//      	}
-//      	fmt.Println(verify) // returns boolean (true/false)
+//        verify, err := crypto.Verify(hash, "password123")
+//        if err != nil {
+//          fmt.Println(err)
+//        }
+//        fmt.Println(verify) // returns boolean (true/false)
 //      }
 func Use(name Algorithm, config Config) (*Algo, error) {
 	algo := &Algo{
