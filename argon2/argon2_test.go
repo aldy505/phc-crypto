@@ -129,4 +129,18 @@ func TestError(t *testing.T) {
 			t.Error("error should have been thrown:", err)
 		}
 	})
+
+	t.Run("should complain of empty function parameters", func(t *testing.T) {
+		_, err := argon2.Hash("", argon2.Config{})
+		if err == nil || err.Error() != "function parameters must not be empty" {
+			t.Error("error should have been thrown:", err)
+		}
+	})
+
+	t.Run("should complain of empty function parameters", func(t *testing.T) {
+		_, err := argon2.Verify("", "")
+		if err == nil || err.Error() != "function parameters must not be empty" {
+			t.Error("error should have been thrown:", err)
+		}
+	})
 }

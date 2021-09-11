@@ -52,6 +52,10 @@ var ErrEmptyField error = errors.New("function parameters must not be empty")
 
 // Hash creates a PHC-formatted hash with config provided
 func Hash(plain string, config Config) (string, error) {
+	if plain == "" {
+		return "", ErrEmptyField
+	}
+
 	if config.KeyLen == 0 {
 		config.KeyLen = KEY_LENGTH
 	}
@@ -98,6 +102,10 @@ func Hash(plain string, config Config) (string, error) {
 
 // Verify checks the hash if it's equal (by an algorithm) to plain text provided.
 func Verify(hash string, plain string) (bool, error) {
+	if hash == "" || plain == "" {
+		return false, ErrEmptyField
+	}
+
 	deserialize := format.Deserialize(hash)
 	if !strings.HasPrefix(deserialize.ID, "argon2") {
 		return false, errors.New("hashed string is not argon instance")
