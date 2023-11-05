@@ -5,6 +5,7 @@ import (
 	"crypto/subtle"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"io"
 	"strconv"
 	"strings"
@@ -52,48 +53,52 @@ var ErrEmptyField error = errors.New("function parameters must not be empty")
 
 // Hash creates a PHC-formatted hash with config provided
 //
-//      import (
-//        "fmt"
-//        "github.com/aldy505/phc-crypto/argon2"
-//      )
+//	package main
 //
-//      func main() {
-//        hash, err := argon2.Hash("password", argon2.Config{
-//          Parallelism: 3,
-//          Variant: argon2.I,
-//        })
-//        if err != nil {
-//          fmt.Println(err)
-//        }
-//        fmt.Println(hash) // $argon2i$v=19$m=65536,t=16,p=3$8400b4e5f01f30092b794de34c61a6fdfea6b6b446560fda08a876bd11e9c62e$3fd77927d189...
-//      }
+//	import (
+//		"fmt"
+//		"github.com/aldy505/phc-crypto/argon2"
+//	)
+//
+//	func main() {
+//		hash, err := argon2.Hash("password", argon2.Config{
+//			Parallelism: 3,
+//			Variant: argon2.I,
+//		})
+//		if err != nil {
+//			fmt.Println(err)
+//		}
+//		fmt.Println(hash) // $argon2i$v=19$m=65536,t=16,p=3$8400b4e5f01f30092b794de34c61a6fdfea6b6b446560fda08a876bd11e9c62e$3fd77927d189...
+//	}
 func Hash(plain string, config Config) (string, error) {
 	if plain == "" {
 		return "", ErrEmptyField
 	}
 
-	if config.KeyLen == 0 {
+	if config.KeyLen <= 0 {
 		config.KeyLen = KEY_LENGTH
 	}
-	if config.Time == 0 {
+	if config.Time <= 0 {
 		config.Time = TIME
 	}
-	if config.Memory == 0 {
+	if config.Memory <= 0 {
 		config.Memory = MEMORY
 	}
-	if config.Parallelism == 0 {
+	if config.Parallelism <= 0 {
 		config.Parallelism = PARALLELISM
 	}
 	if config.Variant < 0 || config.Variant > 1 {
 		config.Variant = DEFAULT_VARIANT
 	}
-	if config.SaltLen == 0 {
+	if config.SaltLen <= 0 {
 		config.SaltLen = SALT_LENGTH
 	}
 
 	// random-generated salt (16 bytes recommended for password hashing)
 	salt := make([]byte, config.SaltLen)
-	io.ReadFull(rand.Reader, salt)
+	if _, err := io.ReadFull(rand.Reader, salt); err != nil {
+		return "", fmt.Errorf("reading random reader: %w", err)
+	}
 
 	var hash []byte
 	if config.Variant == ID {
@@ -118,20 +123,22 @@ func Hash(plain string, config Config) (string, error) {
 
 // Verify checks the hash if it's equal (by an algorithm) to plain text provided.
 //
-//      import (
-//        "fmt"
-//        "github.com/aldy505/phc-crypto/argon2"
-//      )
+//	package main
 //
-//      func main() {
-//        hash := "$argon2i$v=19$m=65536,t=16,p=3$8400b4e5f01f30092b794de34c61a6fdfea6b6b446560fda08a876bd11e9c62e$3fd77927d189..."
+//	import (
+//	  "fmt"
+//	  "github.com/aldy505/phc-crypto/argon2"
+//	)
 //
-//        verify, err := argon2.Verify(hash, "password")
-//        if err != nil {
-//          fmt.Println(err)
-//        }
-//        fmt.Println(verify) // true
-//      }
+//	func main() {
+//	  hash := "$argon2i$v=19$m=65536,t=16,p=3$8400b4e5f01f30092b794de34c61a6fdfea6b6b446560fda08a876bd11e9c62e$3fd77927d189..."
+//
+//	  verify, err := argon2.Verify(hash, "password")
+//	  if err != nil {
+//	    fmt.Println(err)
+//	  }
+//	  fmt.Println(verify) // true
+//	}
 func Verify(hash string, plain string) (bool, error) {
 	if hash == "" || plain == "" {
 		return false, ErrEmptyField

@@ -23,26 +23,26 @@ var ErrEmptyField error = errors.New("function parameters must not be empty")
 
 // Hash creates a PHC-formatted hash with config provided
 //
-//      import (
-//        "fmt"
-//        "github.com/aldy505/phc-crypto/bcrypt"
-//      )
+//	import (
+//	  "fmt"
+//	  "github.com/aldy505/phc-crypto/bcrypt"
+//	)
 //
-//      func main() {
-//        hash, err := bcrypt.Hash("password", bcrypt.Config{
-//          Rounds: 12,
-//        })
-//        if err != nil {
-//          fmt.Println(err)
-//        }
-//        fmt.Println(hash) // $bcrypt$v=0$r=12$$2432612431322479356256373563666e503557...
-//      }
+//	func main() {
+//	  hash, err := bcrypt.Hash("password", bcrypt.Config{
+//	    Rounds: 12,
+//	  })
+//	  if err != nil {
+//	    fmt.Println(err)
+//	  }
+//	  fmt.Println(hash) // $bcrypt$v=0$r=12$$2432612431322479356256373563666e503557...
+//	}
 func Hash(plain string, config Config) (string, error) {
 	if plain == "" {
 		return "", ErrEmptyField
 	}
 
-	if config.Rounds == 0 {
+	if config.Rounds <= 0 {
 		config.Rounds = ROUNDS
 	}
 	hash, err := bcrypt.GenerateFromPassword([]byte(plain), config.Rounds)
@@ -63,20 +63,20 @@ func Hash(plain string, config Config) (string, error) {
 
 // Verify checks the hash if it's equal (by an algorithm) to plain text provided.
 //
-//      import (
-//        "fmt"
-//        "github.com/aldy505/phc-crypto/bcrypt"
-//      )
+//	import (
+//	  "fmt"
+//	  "github.com/aldy505/phc-crypto/bcrypt"
+//	)
 //
-//      func main() {
-//        hash := "$bcrypt$v=0$r=12$$2432612431322479356256373563666e503557..."
+//	func main() {
+//	  hash := "$bcrypt$v=0$r=12$$2432612431322479356256373563666e503557..."
 //
-//        verify, err := bcrypt.Verify(hash, "password")
-//        if err != nil {
-//          fmt.Println(err)
-//        }
-//        fmt.Println(verify) // true
-//      }
+//	  verify, err := bcrypt.Verify(hash, "password")
+//	  if err != nil {
+//	    fmt.Println(err)
+//	  }
+//	  fmt.Println(verify) // true
+//	}
 func Verify(hash string, plain string) (bool, error) {
 	if hash == "" || plain == "" {
 		return false, ErrEmptyField
