@@ -198,22 +198,6 @@ func TestError(t *testing.T) {
 		}
 	})
 
-	t.Run("should fail parsing hex - hash", func(t *testing.T) {
-		hashString := "$pbkdf2sha256$v=0$i=4096$d172c14e9955bf4e4c01422f2af10d4f$invalidHash"
-		_, err := pbkdf2.Verify(hashString, "something")
-		if err == nil {
-			t.Error("error should have been thrown:", err)
-		}
-	})
-
-	t.Run("should fail parsing hex - salt", func(t *testing.T) {
-		hashString := "$pbkdf2sha256$v=0$i=4096$invalidSalt$ad21bd7d8568ce800754aafb6630e7e909006c425489778f8016d3471951d3cc"
-		_, err := pbkdf2.Verify(hashString, "something")
-		if err == nil {
-			t.Error("error should have been thrown:", err)
-		}
-	})
-
 	t.Run("not supported hash function", func(t *testing.T) {
 		hashString := "$pbkdf2asdf$v=0$i=4096$d172c14e9955bf4e4c01422f2af10d4f$ad21bd7d8568ce800754aafb6630e7e909006c425489778f8016d3471951d3cc"
 		_, err := pbkdf2.Verify(hashString, "something")

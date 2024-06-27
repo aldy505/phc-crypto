@@ -3,7 +3,6 @@ package scrypt
 import (
 	"crypto/rand"
 	"crypto/subtle"
-	"encoding/hex"
 	"errors"
 	"io"
 	"strconv"
@@ -92,8 +91,8 @@ func Hash(plain string, config Config) (string, error) {
 			"r":  config.Rounds,
 			"p":  config.Parallelism,
 		},
-		Salt: hex.EncodeToString(salt[:]),
-		Hash: hex.EncodeToString(hash[:]),
+		Salt: salt[:],
+		Hash: hash[:],
 	})
 
 	return hashString, nil
@@ -120,18 +119,18 @@ func Verify(hash string, plain string) (bool, error) {
 		return false, ErrEmptyField
 	}
 
-	deserialize := format.Deserialize(hash)
+	deserialize, err := format.Deserialize(hash)
+	if err != nil {
+		return false, err
+	}
+
 	if !strings.HasPrefix(deserialize.ID, "scrypt") {
 		return false, errors.New("hashed string is not scrypt instance")
 	}
 
 	var verifyHash []byte
 
-	decodedHash, err := hex.DecodeString(deserialize.Hash)
-	if err != nil {
-		return false, err
-	}
-	keyLen := uint32(len(decodedHash))
+	keyLen := uint32(len(deserialize.Hash))
 
 	cost, err := strconv.ParseUint(deserialize.Params["ln"].(string), 10, 32)
 	if err != nil {
@@ -146,17 +145,12 @@ func Verify(hash string, plain string) (bool, error) {
 		return false, err
 	}
 
-	salt, err := hex.DecodeString(deserialize.Salt)
+	verifyHash, err = scrypt.Key([]byte(plain), deserialize.Salt, int(cost), int(rounds), int(parallelism), int(keyLen))
 	if err != nil {
 		return false, err
 	}
 
-	verifyHash, err = scrypt.Key([]byte(plain), salt, int(cost), int(rounds), int(parallelism), int(keyLen))
-	if err != nil {
-		return false, err
-	}
-
-	if subtle.ConstantTimeCompare(decodedHash, verifyHash) == 1 {
+	if subtle.ConstantTimeCompare(deserialize.Hash, verifyHash) == 1 {
 		return true, nil
 	}
 	return false, nil

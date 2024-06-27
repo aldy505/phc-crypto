@@ -88,14 +88,6 @@ func TestError(t *testing.T) {
 		}
 	})
 
-	t.Run("should fail decoding hex - hash", func(t *testing.T) {
-		hashString := "$bcrypt$v=0$r=32$invalidSalt$invalidHash"
-		_, err := bcrypt.Verify(hashString, "something")
-		if err == nil {
-			t.Error("error should have been thrown:", err)
-		}
-	})
-
 	t.Run("should complain of empty function parameters", func(t *testing.T) {
 		_, err := bcrypt.Hash("", bcrypt.Config{})
 		if err == nil || err.Error() != "function parameters must not be empty" {

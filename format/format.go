@@ -3,6 +3,9 @@
 package format
 
 import (
+	"encoding/base64"
+	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -12,9 +15,11 @@ type PHCConfig struct {
 	ID      string
 	Version int
 	Params  map[string]interface{}
-	Salt    string
-	Hash    string
+	Salt    []byte
+	Hash    []byte
 }
+
+var ErrInvalidFormat = errors.New("invalid format")
 
 // Serialize converts PHCConfig struct into a PHC string.
 // See https://github.com/P-H-C/phc-string-format/blob/master/phc-sf-spec.md
@@ -29,11 +34,11 @@ func Serialize(config PHCConfig) string {
 		}
 
 	}
-	return "$" + config.ID + "$v=" + strconv.Itoa(config.Version) + "$" + strings.Join(params, ",") + "$" + config.Salt + "$" + config.Hash
+	return "$" + config.ID + "$v=" + strconv.Itoa(config.Version) + "$" + strings.Join(params, ",") + "$" + base64.RawStdEncoding.EncodeToString(config.Salt) + "$" + base64.RawStdEncoding.EncodeToString(config.Hash)
 }
 
 // Deserialize converts a PHC string into a PHCConfig struct
-func Deserialize(hash string) PHCConfig {
+func Deserialize(hash string) (PHCConfig, error) {
 	hashArray := strings.Split(hash, "$")
 	params := make(map[string]interface{})
 
@@ -46,11 +51,22 @@ func Deserialize(hash string) PHCConfig {
 	}
 
 	version, _ := strconv.Atoi(strings.Replace(hashArray[2], "v=", "", 1))
+
+	salt, err := base64.RawStdEncoding.DecodeString(hashArray[4])
+	if err != nil {
+		return PHCConfig{}, fmt.Errorf("%w: %v", ErrInvalidFormat, err)
+	}
+
+	h, err := base64.RawStdEncoding.DecodeString(hashArray[5])
+	if err != nil {
+		return PHCConfig{}, fmt.Errorf("%w: %v", ErrInvalidFormat, err)
+	}
+
 	return PHCConfig{
 		ID:      hashArray[1],
 		Version: version,
 		Params:  params,
-		Salt:    hashArray[4],
-		Hash:    hashArray[5],
-	}
+		Salt:    salt,
+		Hash:    h,
+	}, nil
 }

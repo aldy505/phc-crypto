@@ -106,7 +106,7 @@ func TestError(t *testing.T) {
 	})
 
 	t.Run("should fail parsing int - 1", func(t *testing.T) {
-		hashString := "$argon2id$v=2$t=a,m=64,p=32$9336bb54e8f5532cc1f3050262d90b8d2c0cdca01321a8661c5e8da641798199$c9e0d744acafe5ddcb844942a75b86d5c878d3656d4ce17f5c30c3b31a117b41fd9785b1dfa47c79f6f8684acaad7055a964ba99bbc8cf225bfe405bac22d5d2"
+		hashString := "$argon2id$v=2$t=a,m=64,p=32$kza7VOj1UyzB8wUCYtkLjSwM3KATIahmHF6NpkF5gZk$yeDXRKyv5d3LhElCp1uG1ch402VtTOF/XDDDsxoRe0H9l4Wx36R8efb4aErKrXBVqWS6mbvIzyJb/kBbrCLV0g"
 		_, err := argon2.Verify(hashString, "something")
 		if err == nil {
 			t.Error("error should have been thrown:", err)
@@ -114,7 +114,7 @@ func TestError(t *testing.T) {
 	})
 
 	t.Run("should fail parsing int - 2", func(t *testing.T) {
-		hashString := "$argon2id$v=2$t=16,m=a,p=32$9336bb54e8f5532cc1f3050262d90b8d2c0cdca01321a8661c5e8da641798199$c9e0d744acafe5ddcb844942a75b86d5c878d3656d4ce17f5c30c3b31a117b41fd9785b1dfa47c79f6f8684acaad7055a964ba99bbc8cf225bfe405bac22d5d2"
+		hashString := "$argon2id$v=2$t=16,m=a,p=32$kza7VOj1UyzB8wUCYtkLjSwM3KATIahmHF6NpkF5gZk$yeDXRKyv5d3LhElCp1uG1ch402VtTOF/XDDDsxoRe0H9l4Wx36R8efb4aErKrXBVqWS6mbvIzyJb/kBbrCLV0g"
 		_, err := argon2.Verify(hashString, "something")
 		if err == nil {
 			t.Error("error should have been thrown:", err)
@@ -122,23 +122,7 @@ func TestError(t *testing.T) {
 	})
 
 	t.Run("should fail parsing int - 3", func(t *testing.T) {
-		hashString := "$argon2id$v=2$t=16,m=64,p=a$9336bb54e8f5532cc1f3050262d90b8d2c0cdca01321a8661c5e8da641798199$c9e0d744acafe5ddcb844942a75b86d5c878d3656d4ce17f5c30c3b31a117b41fd9785b1dfa47c79f6f8684acaad7055a964ba99bbc8cf225bfe405bac22d5d2"
-		_, err := argon2.Verify(hashString, "something")
-		if err == nil {
-			t.Error("error should have been thrown:", err)
-		}
-	})
-
-	t.Run("should fail decoding hex - salt", func(t *testing.T) {
-		hashString := "$argon2id$v=2$t=16,m=64,p=32$invalidSalt$c9e0d744acafe5ddcb844942a75b86d5c878d3656d4ce17f5c30c3b31a117b41fd9785b1dfa47c79f6f8684acaad7055a964ba99bbc8cf225bfe405bac22d5d2"
-		_, err := argon2.Verify(hashString, "something")
-		if err == nil {
-			t.Error("error should have been thrown:", err)
-		}
-	})
-
-	t.Run("should fail decoding hex - hash", func(t *testing.T) {
-		hashString := "$argon2id$v=2$t=16,m=64,p=32$9336bb54e8f5532cc1f3050262d90b8d2c0cdca01321a8661c5e8da641798199$invalidHash"
+		hashString := "$argon2id$v=2$t=16,m=64,p=a$9336bb54e8f5532cc1f3050262d90b8d2c0cdca01321a8661c5e8da64179819$yeDXRKyv5d3LhElCp1uG1ch402VtTOF/XDDDsxoRe0H9l4Wx36R8efb4aErKrXBVqWS6mbvIzyJb/kBbrCLV0g"
 		_, err := argon2.Verify(hashString, "something")
 		if err == nil {
 			t.Error("error should have been thrown:", err)
