@@ -7,7 +7,6 @@ import (
 	"crypto/sha256"
 	"crypto/sha512"
 	"crypto/subtle"
-	"encoding/hex"
 	"errors"
 	"io"
 	"strconv"
@@ -129,8 +128,8 @@ func Hash(plain string, config Config) (string, error) {
 		Params: map[string]interface{}{
 			"i": config.Rounds,
 		},
-		Salt: hex.EncodeToString(salt[:]),
-		Hash: hex.EncodeToString(hash[:]),
+		Salt: salt[:],
+		Hash: hash[:],
 	})
 
 	return hashString, nil
@@ -157,24 +156,18 @@ func Verify(hash string, plain string) (bool, error) {
 		return false, ErrEmptyField
 	}
 
-	deserialize := format.Deserialize(hash)
+	deserialize, err := format.Deserialize(hash)
+	if err != nil {
+		return false, err
+	}
 
 	if !strings.HasPrefix(deserialize.ID, "pbkdf2") {
 		return false, errors.New("hashed string is not pbkdf2 instance")
 	}
 
-	decodedHash, err := hex.DecodeString(deserialize.Hash)
-	if err != nil {
-		return false, err
-	}
-	keyLen := int(len(decodedHash))
+	keyLen := int(len(deserialize.Hash))
 
 	rounds, err := strconv.ParseInt(deserialize.Params["i"].(string), 10, 32)
-	if err != nil {
-		return false, err
-	}
-
-	salt, err := hex.DecodeString(deserialize.Salt)
 	if err != nil {
 		return false, err
 	}
@@ -185,22 +178,22 @@ func Verify(hash string, plain string) (bool, error) {
 
 	switch hashFunc {
 	case "sha1":
-		verifyHash = pbkdf2.Key([]byte(plain), salt, int(rounds), keyLen, sha1.New)
+		verifyHash = pbkdf2.Key([]byte(plain), deserialize.Salt, int(rounds), keyLen, sha1.New)
 	case "sha256":
-		verifyHash = pbkdf2.Key([]byte(plain), salt, int(rounds), keyLen, sha256.New)
+		verifyHash = pbkdf2.Key([]byte(plain), deserialize.Salt, int(rounds), keyLen, sha256.New)
 	case "sha224":
-		verifyHash = pbkdf2.Key([]byte(plain), salt, int(rounds), keyLen, sha256.New224)
+		verifyHash = pbkdf2.Key([]byte(plain), deserialize.Salt, int(rounds), keyLen, sha256.New224)
 	case "sha512":
-		verifyHash = pbkdf2.Key([]byte(plain), salt, int(rounds), keyLen, sha512.New)
+		verifyHash = pbkdf2.Key([]byte(plain), deserialize.Salt, int(rounds), keyLen, sha512.New)
 	case "sha384":
-		verifyHash = pbkdf2.Key([]byte(plain), salt, int(rounds), keyLen, sha512.New384)
+		verifyHash = pbkdf2.Key([]byte(plain), deserialize.Salt, int(rounds), keyLen, sha512.New384)
 	case "md5":
-		verifyHash = pbkdf2.Key([]byte(plain), salt, int(rounds), keyLen, md5.New)
+		verifyHash = pbkdf2.Key([]byte(plain), deserialize.Salt, int(rounds), keyLen, md5.New)
 	default:
 		return false, ErrInvalidHashFunction
 	}
 
-	if subtle.ConstantTimeCompare(decodedHash, verifyHash) == 1 {
+	if subtle.ConstantTimeCompare(deserialize.Hash, verifyHash) == 1 {
 		return true, nil
 	}
 	return false, nil

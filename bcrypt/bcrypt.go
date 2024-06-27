@@ -1,7 +1,6 @@
 package bcrypt
 
 import (
-	"encoding/hex"
 	"errors"
 	"strings"
 
@@ -56,7 +55,7 @@ func Hash(plain string, config Config) (string, error) {
 		Params: map[string]interface{}{
 			"r": config.Rounds,
 		},
-		Hash: hex.EncodeToString(hash),
+		Hash: hash,
 	})
 	return hashString, nil
 }
@@ -82,15 +81,16 @@ func Verify(hash string, plain string) (bool, error) {
 		return false, ErrEmptyField
 	}
 
-	deserialize := format.Deserialize(hash)
-	if !strings.HasPrefix(deserialize.ID, "bcrypt") {
-		return false, errors.New("hashed string is not a bcrypt instance")
-	}
-	decodedHash, err := hex.DecodeString(deserialize.Hash)
+	deserialize, err := format.Deserialize(hash)
 	if err != nil {
 		return false, err
 	}
-	err = bcrypt.CompareHashAndPassword(decodedHash, []byte(plain))
+
+	if !strings.HasPrefix(deserialize.ID, "bcrypt") {
+		return false, errors.New("hashed string is not a bcrypt instance")
+	}
+
+	err = bcrypt.CompareHashAndPassword(deserialize.Hash, []byte(plain))
 	if err != nil {
 		return false, nil
 	}

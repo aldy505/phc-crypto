@@ -86,7 +86,7 @@ project. Feel free to refactor, add new feature, fix unknown bugs, and have fun!
 ```
 MIT License
 
-Copyright (c) 2021-present Reinaldy Rafli and PHC Crypto collaborators
+Copyright (c) 2024 Reinaldy Rafli and PHC Crypto collaborators
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

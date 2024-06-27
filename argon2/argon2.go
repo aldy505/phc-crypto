@@ -3,7 +3,6 @@ package argon2
 import (
 	"crypto/rand"
 	"crypto/subtle"
-	"encoding/hex"
 	"errors"
 	"fmt"
 	"io"
@@ -115,8 +114,8 @@ func Hash(plain string, config Config) (string, error) {
 			"t": int(config.Time),
 			"p": int(config.Parallelism),
 		},
-		Salt: hex.EncodeToString(salt),
-		Hash: hex.EncodeToString(hash),
+		Salt: salt,
+		Hash: hash,
 	})
 	return hashString, nil
 }
@@ -144,17 +143,16 @@ func Verify(hash string, plain string) (bool, error) {
 		return false, ErrEmptyField
 	}
 
-	deserialize := format.Deserialize(hash)
+	deserialize, err := format.Deserialize(hash)
+	if err != nil {
+		return false, err
+	}
+
 	if !strings.HasPrefix(deserialize.ID, "argon2") {
 		return false, errors.New("hashed string is not argon instance")
 	}
 
-	var verifyHash []byte
-	decodedHash, err := hex.DecodeString(deserialize.Hash)
-	if err != nil {
-		return false, err
-	}
-	keyLen := uint32(len(decodedHash))
+	keyLen := uint32(len(deserialize.Hash))
 
 	time, err := strconv.ParseUint(deserialize.Params["t"].(string), 10, 32)
 	if err != nil {
@@ -169,18 +167,14 @@ func Verify(hash string, plain string) (bool, error) {
 		return false, err
 	}
 
-	salt, err := hex.DecodeString(deserialize.Salt)
-	if err != nil {
-		return false, err
-	}
-
+	var verifyHash []byte
 	if deserialize.ID == "argon2id" {
-		verifyHash = argon2.IDKey([]byte(plain), salt, uint32(time), uint32(memory), uint8(parallelism), keyLen)
+		verifyHash = argon2.IDKey([]byte(plain), deserialize.Salt, uint32(time), uint32(memory), uint8(parallelism), keyLen)
 	} else if deserialize.ID == "argon2i" {
-		verifyHash = argon2.Key([]byte(plain), salt, uint32(time), uint32(memory), uint8(parallelism), keyLen)
+		verifyHash = argon2.Key([]byte(plain), deserialize.Salt, uint32(time), uint32(memory), uint8(parallelism), keyLen)
 	}
 
-	if subtle.ConstantTimeCompare(verifyHash, decodedHash) == 1 {
+	if subtle.ConstantTimeCompare(verifyHash, deserialize.Hash) == 1 {
 		return true, nil
 	}
 	return false, nil

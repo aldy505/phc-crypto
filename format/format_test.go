@@ -1,6 +1,7 @@
 package format_test
 
 import (
+	"bytes"
 	"strings"
 	"testing"
 
@@ -16,19 +17,22 @@ func TestSerialize(t *testing.T) {
 			"Somewhere": "Far",
 			"Meaning":   42,
 		},
-		Salt: "SaltyText",
-		Hash: "HashyText",
+		Salt: []byte("SaltyText"),
+		Hash: []byte("HashyText"),
 	})
 
 	destructured := strings.Split(serialized, "$")
 	params := "Something=New,Somewhere=Far,Meaning=42"
-	if destructured[1] != "argon2id" || destructured[2] != "v=2" || len(destructured[3]) != len(params) || destructured[4] != "SaltyText" || destructured[5] != "HashyText" {
+	if destructured[1] != "argon2id" || destructured[2] != "v=2" || len(destructured[3]) != len(params) || destructured[4] != "U2FsdHlUZXh0" || destructured[5] != "SGFzaHlUZXh0" {
 		t.Error("Unexpected output: ", serialized)
 	}
 }
 
 func TestDeserialize(t *testing.T) {
-	deserialized := format.Deserialize("$argon2id$v=2$Something=New,Somewhere=Far,Meaning=42$SaltyText$HashyText")
+	deserialized, err := format.Deserialize("$argon2id$v=2$Something=New,Somewhere=Far,Meaning=42$U2FsdHlUZXh0$SGFzaHlUZXh0")
+	if err != nil {
+		t.Errorf("unexpected error: %s", err.Error())
+	}
 
 	if deserialized.ID != "argon2id" {
 		t.Error("Unexpected ID: ", deserialized.ID)
@@ -38,11 +42,11 @@ func TestDeserialize(t *testing.T) {
 		t.Error("Unexpected Version: ", deserialized.Version)
 	}
 
-	if deserialized.Salt != "SaltyText" {
+	if !bytes.Equal(deserialized.Salt, []byte("SaltyText")) {
 		t.Error("Unexpected Salt: ", deserialized.Salt)
 	}
 
-	if deserialized.Hash != "HashyText" {
+	if !bytes.Equal(deserialized.Hash, []byte("HashyText")) {
 		t.Error("Unexpected Hash: ", deserialized.Hash)
 	}
 
